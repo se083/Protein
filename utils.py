@@ -23,7 +23,7 @@ def indices_to_seqaln(indices, vocab_list, join = False):
 
 
 def get_one_hot(targets, nb_classes):
-    res = np.eye(nb_classes)[np.array(targets).reshape(-1)]
+    res = np.eye(nb_classes,dtype=np.float32)[np.array(targets).reshape(-1)]
     return res.reshape(list(targets.shape)+[nb_classes])
 
 

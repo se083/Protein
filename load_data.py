@@ -10,7 +10,7 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     combdf = pd.read_csv(file)
 
     # calculating minimum number of sequences per library
-    mdf = combdf.groupby('trained_target_site').count().min()
+    mdf = combdf.groupby('trained_target_site').count()["target_sequence"].min()
     combdf = combdf.groupby('trained_target_site').apply(
         lambda x : x.sample(mdf)
     )
