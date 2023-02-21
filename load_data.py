@@ -9,8 +9,14 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     # get input
     combdf = pd.read_csv(file)
 
+    # calculating minimum number of sequences per library
+    mdf = combdf.groupby('trained_target_site').count().min()
+    combdf = combdf.groupby('trained_target_site').apply(
+        lambda x : x.sample(mdf)
+    )
+
     # sample to get nreads from each targetsite
-    combdf = combdf.groupby('target_sequence').apply(lambda x : x.sample(nreads))
+    # combdf = combdf.groupby('target_sequence').apply(lambda x : x.sample(nreads))
 
     # combine targetsite with Sequence for training input
     combdf['target_sequence_subset'] = [''.join(np.array(list(x))[ts_subset_index]) for x in combdf.target_sequence]
