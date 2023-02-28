@@ -27,6 +27,7 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
     out_samples = n_out
     if model_type != 'MLP':
         z_train = training.model_predict(model.encoder, yx_oh[train_index], 10000)
+    print("completed predictions")
     if model_type == 'MLP':
         z_found = np.repeat(np.reshape(a=yx_oh[test_index[0],:ts_len], newshape=(1,ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
     elif model_type == 'VQ_VAE':
@@ -36,31 +37,39 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
         z_found, y_onehotdist = utp.z_search(decoder=model.decoder, z_values=z_train, compare_to_oh=yx_oh[test_index[0],:ts_len], ts_len=ts_len, n_sampling=40000, out_samples=out_samples, loops=3, zoom=0.25)
     else:
         z_found = utp.z_unif_sampling(z_values=z_train, n_samples=out_samples)
+        print("completed sampling")
         ts_oh = np.repeat(np.reshape(a=yx_oh[test_index[0],:ts_len], newshape=(1,ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
+        print("built targets")
         z_found = np.concatenate((ts_oh,z_found),1)
+    print("completed search")
 
     yx_pred_zsearch_ind = utp.predict_and_index(model.decoder, z_found, 0)
     if model_type in ['CVAE','MMD_CVAE','MLP']:
         ts_ind = np.repeat(np.reshape(a=yx_ind[test_index[0],:ts_len], newshape=(1,ts_len)), repeats=out_samples, axis=0)
         yx_pred_zsearch_ind = np.concatenate((ts_ind,yx_pred_zsearch_ind),1) # add ts to output, cvae only gives recombinase sequences as output
+    print("built target indices")
 
     # hamming distances of predictions to truth
     pred_hamming = utp.hamming_distance_uneven_df(loop_array=yx_pred_zsearch_ind, array1=yx_ind[test_index], ts_len=ts_len, vocab_list=vocab_list, ts_labels=np.array([yx_ind[test_index[0],:ts_len]]), summarise_function=summary_function)
     pred_hamming['DataType'] = 'Prediction<>Truth'
+    print("hamming distances")
 
     # hamming distances from closest neighbor library in training set to truth
     ts_hamming = utils.np_hamming_dist(yx_ind[test_index[0],:ts_len], yx_ind[train_index,:ts_len])
     closest_index = np.array(train_index)[ts_hamming == np.min(ts_hamming)]
     closest_hamming = utp.hamming_distance_uneven_df(loop_array=yx_ind[closest_index], array1=yx_ind[test_index], ts_len=ts_len, vocab_list=vocab_list, ts_labels=np.array([yx_ind[test_index[0],:ts_len]]), summarise_function=summary_function)
     closest_hamming['DataType'] = 'Closest<>Truth'
+    print("hamming distance crl")
 
     # combine hamming of prediction and closest lib
     out_dict['prediction_hamming'].append( pd.concat([recon_hamming, pred_hamming, closest_hamming]))
+    print("combining hamming and closest lib")
 
     # add actual predictions to output
     pred_str = pd.DataFrame(utils.indices_to_seqaln(yx_pred_zsearch_ind, vocab_list, join = False))
     pred_str['TargetSequence'] = leave_out_y
     out_dict['prediction_strings'].append(pred_str)
+    print("add actual predictions")
 
     return out_dict
 
