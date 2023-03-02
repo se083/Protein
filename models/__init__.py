@@ -6,11 +6,13 @@ import models.vq_vae
 import models.conditional_vae
 import models.conditional_mmd_vae
 import models.mlp
+import models.vae_cnn
 import models.mmd_vae_cnn
 import models.vq_vae_cnn
 import models.conditional_vae_cnn
 import models.conditional_mmd_vae_cnn
 import models.mlp_cnn
+import models.vae_rnn
 import models.mmd_vae_rnn
 import models.vq_vae_rnn
 import models.conditional_vae_rnn
