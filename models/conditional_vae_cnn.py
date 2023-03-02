@@ -9,33 +9,39 @@ from torch.nn import functional as F
 from math import prod
 
 class VaeEncoder(nn.Module):
-    def __init__(self, layer_sizes, **kwargs):
+    def __init__(self, layer_sizes, ts_len, **kwargs):
         super(VaeEncoder, self).__init__()
+        self.ts_len = ts_len
+        # new code
         #self.flatten = Flatten()
-        #self.fc_blocks = nn.Sequential(*[fc_block(in_size, out_size, **kwargs) for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:-1])])
         self.conv_blocks = nn.Sequential(
             *[conv_block(in_size, out_size) 
               for in_size, out_size in zip(layer_sizes[:-2], layer_sizes[1:-1])]
-        )        
+        )
+        # changed: self.conv_blocks = nn.Sequential(*[conv_block(in_size, out_size) for in_size, out_size in zip(layer_sizes[:-2], layer_sizes[1:-1])])
         self.fc_mu = nn.Linear(layer_sizes[-2], layer_sizes[-1])
         self.fc_logvar = nn.Linear(layer_sizes[-2], layer_sizes[-1])
 
     def forward(self, x):
         x = x.transpose(1, 2)
+        y = x[:,:,:self.ts_len]
+        #x = x[:,self.ts_len:] # protein part - original is without it
         #x = self.flatten(x)
-        #x = self.fc_blocks(x)
         x = self.conv_blocks(x)
-        x = x.mean(dim=-1)
-        return self.fc_mu(x), self.fc_logvar(x)
+        #x = self.blocks(x)
+        x = x.mean(dim=-1) #avg of channels over the sequence lengths (spatial dim) --> we have bath sizes * channel size
+        return self.fc_mu(x), self.fc_logvar(x), y
 
-
-class VAE(nn.Module):
+class CVAE(nn.Module):
     def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
-        super(VAE, self).__init__()
+        super(CVAE, self).__init__()
+        self.input_shape = (input_shape[0]-ts_len, input_shape[1])
+        #self.layer_sizes = [prod(input_shape), *layer_sizes, latent_size]
+        #new code
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
-        self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
+        self.encoder = VaeEncoder(self.layer_sizes, ts_len, **layer_kwargs)
         self.dec_layer_sizes = [[ts_len, input_shape[1] + latent_size], *layer_sizes[::-1], self.input_shape]
-        self.decoder = VaeCNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
+        self.decoder = VaeCNNDecoder(self.dec_layer_sizes, output_shape = self.input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
         std = torch.exp(0.5*logvar)
@@ -43,9 +49,10 @@ class VAE(nn.Module):
         return mu + eps*std
 
     def forward(self, x):
-        self.mu, self.logvar = self.encoder(x)
+        self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        return self.decoder(z)
+        z = torch.cat((y.view(-1, prod(y.shape[1:])), z), 1) # combine ts with z
+        return torch.cat((y,self.decoder(z)),1)
 
     def loss_function(self, recon_x, x, **kwargs):
         recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
