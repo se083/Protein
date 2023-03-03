@@ -23,8 +23,11 @@ class VaeEncoder(nn.Module):
         self.fc_logvar = nn.Linear(layer_sizes[-2], layer_sizes[-1])
 
     def forward(self, x):
+        print(x.shape)
         x = x.transpose(1, 2)
+        print(x.shape)
         y = x[:,:,:self.ts_len]
+        print(y.shape)
         #x = x[:,self.ts_len:] # protein part - original is without it
         #x = self.flatten(x)
         x = self.conv_blocks(x)
@@ -51,6 +54,7 @@ class CVAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
+        z = z.repeat(1, 1, y.shape[-1])
         z = torch.cat((y.reshape(-1, prod(y.shape[1:])), z), 1) # combine ts with z
         return torch.cat((y,self.decoder(z)),1)
 
