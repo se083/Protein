@@ -108,7 +108,7 @@ class VQVAE(nn.Module):
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VqEncoder(self.layer_sizes, **layer_kwargs)
         self.quantizer = VectorQuantizer(num_embeddings=num_embeddings, embedding_dim=embedding_dim, beta=0.25)
-        self.dec_layer_sizes = [[ts_len, input_shape[1] + latent_size], *layer_sizes[::-1], self.input_shape]
+        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
 
     def forward(self, x):

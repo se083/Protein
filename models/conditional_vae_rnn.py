@@ -45,7 +45,7 @@ class CVAE(nn.Module):
         #new code
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, ts_len, **layer_kwargs)
-        self.dec_layer_sizes = [[ts_len, input_shape[1] + latent_size], *layer_sizes[::-1], self.input_shape]
+        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = self.input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
