@@ -24,7 +24,7 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.splitter = Splitter(ts_len)
         output_shape = (input_shape[0]-ts_len, input_shape[1])
-        self.dec_layer_sizes = [[ts_len, input_shape[1] + latent_size], *layer_sizes[::-1], self.input_shape]
+        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = output_shape, **layer_kwargs)
 
     def forward(self, x):

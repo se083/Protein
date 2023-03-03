@@ -44,7 +44,7 @@ class MMD_VAE(nn.Module):
         super(MMD_VAE, self).__init__()
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
-        self.dec_layer_sizes = [[ts_len, input_shape[1] + latent_size], *layer_sizes[::-1], self.input_shape]
+        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
 
     def forward(self, x):
