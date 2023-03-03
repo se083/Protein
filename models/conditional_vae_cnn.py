@@ -51,7 +51,7 @@ class CVAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        z = torch.cat((y.view(-1, prod(y.shape[1:])), z), 1) # combine ts with z
+        z = torch.cat((y.reshape(-1, prod(y.shape[1:])), z), 1) # combine ts with z
         return torch.cat((y,self.decoder(z)),1)
 
     def loss_function(self, recon_x, x, **kwargs):
