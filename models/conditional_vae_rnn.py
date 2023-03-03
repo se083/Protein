@@ -30,8 +30,8 @@ class VaeEncoder(nn.Module):
     def forward(self, x):
         y = x[:,:self.ts_len] # target site part
         initial_state = (
-            torch.zeros([x.shape[0], self.num_layers, self.hidden_size]), 
-            torch.zeros([x.shape[0], self.num_layers, self.hidden_size])
+            torch.zeros([self.num_layers, x.shape[0], self.hidden_size]), 
+            torch.zeros([self.num_layers, x.shape[0], self.hidden_size])
         )
         output, (h, c) = self.rnn(x, initial_state)
         x = output[:, -1]
