@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-def rnn_forward(x, z, o_len, rnn, last):
+def rnn_forward(z, o_len, rnn, last):
     state = (z.unsqueeze(dim = 1), z.unsqueeze(dim = 1))
     #output, state = self.rnn(x, state)
     #output = output[:, -1]
@@ -38,6 +38,6 @@ class VaeRNNDecoder(nn.Module):
         self.last = nn.Linear(self.hidden_size, o_channels)
         #self.block = deconv_decoder(layer_sizes, output_shape)
 
-    def forward(self, x, z):
-        return rnn_forward(x, z, self.o_len, self.rnn, self.last)
+    def forward(self, z):
+        return rnn_forward(z, self.o_len, self.rnn, self.last)
     
