@@ -32,7 +32,7 @@ class VaeEncoder(nn.Module):
         #x = self.flatten(x)
         x = self.conv_blocks(x)
         #x = self.blocks(x)
-        x = x.mean(dim=-1) #avg of channels over the sequence lengths (spatial dim) --> we have bath sizes * channel size
+        x = x.mean(dim=-1) #avg of channels over the sequence lengths (spatial dim) --> we have bath size * channel size
         return self.fc_mu(x), self.fc_logvar(x), y
 
 class CVAE(nn.Module):
@@ -55,6 +55,7 @@ class CVAE(nn.Module):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
         z = z.repeat(1, 1, y.shape[-1])
+        print(y.shape, z.shape)
         z = torch.cat((y, z), 1) # combine ts with z
         return torch.cat((y,self.decoder(z)),1)
 
