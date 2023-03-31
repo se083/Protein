@@ -54,7 +54,7 @@ class CVAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        z = z.repeat(1, 1, y.shape[-1])
+        z = z.repeat(128, 1, y.shape[-1])
         print(y.shape, z.shape)
         z = torch.cat((y, z), 1) # combine ts with z
         return torch.cat((y,self.decoder(z)),1)
