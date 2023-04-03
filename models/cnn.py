@@ -41,8 +41,6 @@ def deconv_decoder(layer_sizes, output_shape):
     input_channels = t_channels
     hidden_channels = layer_sizes[1]
     in_len = t_len
-    print(t_len, t_channels)
-    print(o_len, o_channels)
 
     blocks = []
 
@@ -94,5 +92,4 @@ class VaeCNNDecoder(nn.Module):
         #x = self.fc_last(x)
         #x = self.sigmoid(x)
         #return self.unflatten(x)
-        print(x.shape)
         return self.block(x)

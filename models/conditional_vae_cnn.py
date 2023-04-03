@@ -23,16 +23,12 @@ class VaeEncoder(nn.Module):
         self.fc_logvar = nn.Linear(layer_sizes[-2], layer_sizes[-1])
 
     def forward(self, x):
-        print(x.shape)
         x = x.transpose(1, 2)
-        print(x.shape)
         y = x[:,:,:self.ts_len]
-        print(y.shape)
         #x = x[:,self.ts_len:] # protein part - original is without it
         #x = self.flatten(x)
         x = self.conv_blocks(x)
         #x = self.blocks(x)
-        print(x.shape)
         x = x.mean(dim=-1) #avg of channels over the sequence lengths (spatial dim) --> we have bath size * channel size
         mu = self.fc_mu(x)
         print(mu.shape)
@@ -58,14 +54,10 @@ class CVAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        print(z.shape)
         z = z.unsqueeze(dim = -1)
         z = z.repeat(1, 1, y.shape[-1])
-        print(z.shape)
-        print(y.shape)
         z = torch.cat((y, z), 1) # combine ts with z
         x_reconstructed = self.decoder(z)
-        print(x_reconstructed.shape)
         x_y_reconstructed = torch.cat((y,x_reconstructed),2)
         x_y_reconstructed = x_y_reconstructed.transpose(1, 2)
         return x_y_reconstructed
