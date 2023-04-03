@@ -59,11 +59,14 @@ class CVAE(nn.Module):
         mu, logvar, y = self.encoder(x)
         z = self.reparameterize(mu, logvar)
         print(z.shape)
+        z = z.unsqueeze(dim = -1)
         z = z.repeat(1, 1, y.shape[-1])
         print(z.shape)
         print(y.shape)
         z = torch.cat((y, z), 1) # combine ts with z
-        return torch.cat((y,self.decoder(z)),1)
+        x_reconstructed = self.decoder(z)
+        print(x_reconstructed.shape)
+        return torch.cat((y,x_reconstructed),2)
 
     def loss_function(self, recon_x, x, **kwargs):
         recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
