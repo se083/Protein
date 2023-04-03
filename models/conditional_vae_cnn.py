@@ -56,8 +56,8 @@ class CVAE(nn.Module):
         return mu + eps*std
 
     def forward(self, x):
-        mu, logvar, y = self.encoder(x)
-        z = self.reparameterize(mu, logvar)
+        self.mu, self.logvar, y = self.encoder(x)
+        z = self.reparameterize(self.mu, self.logvar)
         print(z.shape)
         z = z.unsqueeze(dim = -1)
         z = z.repeat(1, 1, y.shape[-1])
