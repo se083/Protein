@@ -31,7 +31,6 @@ class VaeEncoder(nn.Module):
         #x = self.blocks(x)
         x = x.mean(dim=-1) #avg of channels over the sequence lengths (spatial dim) --> we have bath size * channel size
         mu = self.fc_mu(x)
-        print(mu.shape)
         logvar = self.fc_logvar(x)
         return mu, logvar, y
 

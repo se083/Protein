@@ -49,7 +49,6 @@ def deconv_decoder(layer_sizes, output_shape):
             input_channels, 
             hidden_channels
         )
-        print(input_channels, hidden_channels)
         blocks.append(block)
         in_len = 2 * in_len + 8
         input_channels = hidden_channels
