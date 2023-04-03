@@ -32,8 +32,12 @@ class VaeEncoder(nn.Module):
         #x = self.flatten(x)
         x = self.conv_blocks(x)
         #x = self.blocks(x)
+        print(x.shape)
         x = x.mean(dim=-1) #avg of channels over the sequence lengths (spatial dim) --> we have bath size * channel size
-        return self.fc_mu(x), self.fc_logvar(x), y
+        mu = self.fc_mu(x)
+        print(mu.shape)
+        logvar = self.fc_logvar(x)
+        return mu, logvar, y
 
 class CVAE(nn.Module):
     def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
@@ -52,8 +56,8 @@ class CVAE(nn.Module):
         return mu + eps*std
 
     def forward(self, x):
-        self.mu, self.logvar, y = self.encoder(x)
-        z = self.reparameterize(self.mu, self.logvar)
+        mu, logvar, y = self.encoder(x)
+        z = self.reparameterize(mu, logvar)
         print(z.shape)
         z = z.repeat(1, 1, y.shape[-1])
         print(z.shape)
