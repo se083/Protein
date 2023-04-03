@@ -91,4 +91,6 @@ class VaeCNNDecoder(nn.Module):
         #x = self.fc_last(x)
         #x = self.sigmoid(x)
         #return self.unflatten(x)
-        return self.block(x)
+        x = x.transpose(1, 2)
+        x_y = self.block(x)
+        return x_y.transpose(1,2)

@@ -25,6 +25,7 @@ class VaeEncoder(nn.Module):
     def forward(self, x):
         x = x.transpose(1, 2)
         y = x[:,:,:self.ts_len]
+        y = y.transpose(1, 2)
         #x = x[:,self.ts_len:] # protein part - original is without it
         #x = self.flatten(x)
         x = self.conv_blocks(x)
@@ -53,12 +54,11 @@ class CVAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        z = z.unsqueeze(dim = -1)
-        z = z.repeat(1, 1, y.shape[-1])
-        z = torch.cat((y, z), 1) # combine ts with z
+        z = z.unsqueeze(dim = -2)
+        z = z.repeat(1, y.shape[-2], 1)
+        z = torch.cat((y, z), -1) # combine ts with z
         x_reconstructed = self.decoder(z)
-        x_y_reconstructed = torch.cat((y,x_reconstructed),2)
-        x_y_reconstructed = x_y_reconstructed.transpose(1, 2)
+        x_y_reconstructed = torch.cat((y,x_reconstructed),1)
         return x_y_reconstructed
 
     def loss_function(self, recon_x, x, **kwargs):
