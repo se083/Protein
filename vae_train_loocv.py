@@ -33,14 +33,23 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
     elif model_type == 'VQ_VAE':
         z_found, y_onehotdist = utp.z_search(decoder=model.decoder, z_values=z_train, compare_to_oh=yx_oh[test_index[0],:ts_len], ts_len=ts_len, n_sampling=40000, out_samples=out_samples, loops=3, zoom=0.25)
         # sample from from embedding space for each z_dim and decode >> chose best match
-    elif model_type != 'CVAE' and model_type != 'MMD_CVAE':
+    elif 'CVAE' not in model_type:
         z_found, y_onehotdist = utp.z_search(decoder=model.decoder, z_values=z_train, compare_to_oh=yx_oh[test_index[0],:ts_len], ts_len=ts_len, n_sampling=40000, out_samples=out_samples, loops=3, zoom=0.25)
     else:
         z_found = utp.z_unif_sampling(z_values=z_train, n_samples=out_samples)
         print("completed sampling")
-        ts_oh = np.repeat(np.reshape(a=yx_oh[test_index[0],:ts_len], newshape=(1,ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
-        print("built targets")
-        z_found = np.concatenate((ts_oh,z_found),1)
+        if 'CNN' in model_type:
+            y = yx_oh[test_index[0],:ts_len]
+            z_found = np.expand_dims(z_found, axis = -2)
+            y = np.expand_dims(y, axis = 0)
+            z_found = np.repeat(z_found, repeats=y.shape[-2], axis=-2)
+            y = np.repeat(y, repeats=out_samples, axis=0)
+            print("built targets")
+            z_found = np.concatenate((y, z_found), -1)
+        else:
+            ts_oh = np.repeat(np.reshape(a=yx_oh[test_index[0],:ts_len], newshape=(1,ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
+            print("built targets")
+            z_found = np.concatenate((ts_oh,z_found),1)
     print("completed search")
 
     yx_pred_zsearch_ind = utp.predict_and_index(model.decoder, z_found, 0)
