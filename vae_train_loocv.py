@@ -13,7 +13,7 @@ import argparse
 
 
 def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):
-    # save loss
+    # loss
     loss_df['TargetSequence'] = leave_out_y
     out_dict['loss'].append(loss_df)
 
@@ -37,7 +37,6 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
         z_found, y_onehotdist = utp.z_search(decoder=model.decoder, z_values=z_train, compare_to_oh=yx_oh[test_index[0],:ts_len], ts_len=ts_len, n_sampling=40000, out_samples=out_samples, loops=3, zoom=0.25)
     else:
         z_found = utp.z_unif_sampling(z_values=z_train, n_samples=out_samples)
-        print("completed sampling")
         if 'CNN' in model_type:
             y = yx_oh[test_index[0],:ts_len]
             z_found = np.expand_dims(z_found, axis = -2)
@@ -53,7 +52,7 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
     print("completed search")
 
     yx_pred_zsearch_ind = utp.predict_and_index(model.decoder, z_found, 0)
-    if model_type in ['CVAE','MMD_CVAE','MLP']:
+    if 'CVAE' in model_type or 'MLP' in model_type:
         ts_ind = np.repeat(np.reshape(a=yx_ind[test_index[0],:ts_len], newshape=(1,ts_len)), repeats=out_samples, axis=0)
         yx_pred_zsearch_ind = np.concatenate((ts_ind,yx_pred_zsearch_ind),1) # add ts to output, cvae only gives recombinase sequences as output
     print("built target indices")
