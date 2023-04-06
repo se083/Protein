@@ -39,8 +39,9 @@ class VaeRNNDecoder(nn.Module):
         for i in range(self.o_len):
             x, state = self.rnn(x, state)
             x = x[:, -1]
-            x = self.last(x)
+            o = self.last(x)
+            o = o.unsqueeze(dim=1)
+            output.append(o)
             x = x.unsqueeze(dim=1)
-            output.append(x)
         output = torch.cat(output, dim=1)
         return output    
