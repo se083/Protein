@@ -25,12 +25,12 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
     # z search predictions
     print('z search prediction')
     out_samples = n_out
-    if model_type != 'MLP':
+    if 'MLP' not in model_type:
         z_train = training.model_predict(model.encoder, yx_oh[train_index], 10000)
     print("completed predictions")
-    if model_type == 'MLP':
+    if 'MLP' in model_type:
         z_found = np.repeat(np.reshape(a=yx_oh[test_index[0],:ts_len], newshape=(1,ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
-    elif model_type == 'VQ_VAE':
+    elif 'VQ_VAE' in model_type:
         z_found, y_onehotdist = utp.z_search(decoder=model.decoder, z_values=z_train, compare_to_oh=yx_oh[test_index[0],:ts_len], ts_len=ts_len, n_sampling=40000, out_samples=out_samples, loops=3, zoom=0.25)
         # sample from from embedding space for each z_dim and decode >> chose best match
     elif 'CVAE' not in model_type:
@@ -225,7 +225,8 @@ if __name__ == '__main__':
     folderstr = utils.check_mkdir(folderstr)
 
     # save parameters
-    with open(folderstr + "/parameters.txt","w") as f: f.writelines([str(key) + f':\t' + str(val) + '\n' for key, val in vars(args).items()])
+    with open(folderstr + "/parameters.txt","w") as f: 
+        f.writelines([str(key) + f':\t' + str(val) + '\n' for key, val in vars(args).items()])
 
     # save all dataframes
     for key, value in out_collect.items():
