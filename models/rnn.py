@@ -1,19 +1,6 @@
 import torch
 import torch.nn as nn
 
-def rnn_forward(z, o_len, rnn, last):
-    state = (z.unsqueeze(dim = 1), z.unsqueeze(dim = 1))
-    #output, state = self.rnn(x, state)
-    #output = output[:, -1]
-    output = []
-    for i in range(o_len):
-        x, state = rnn(x, state)
-        x = x[:, -1]
-        x = last(x)
-        x = x.unsqueeze(dim=1)
-        output.append(x)
-    output = torch.cat(output, dim=1)
-    return output
 
 class VaeRNNDecoder(nn.Module):
     def __init__(self, layer_sizes, output_shape, **kwargs):
@@ -25,7 +12,7 @@ class VaeRNNDecoder(nn.Module):
         self.t_len, t_channels, latent_size = layer_sizes[0]
         self.o_len, o_channels = output_shape    
         hidden_channels = layer_sizes[1]
-        self.hidden_size = latent_size
+        self.hidden_size = latent_size + o_channels
         self.num_layers = 1
         self.rnn = nn.LSTM(
             input_size = t_channels, 
@@ -39,5 +26,21 @@ class VaeRNNDecoder(nn.Module):
         #self.block = deconv_decoder(layer_sizes, output_shape)
 
     def forward(self, z):
-        return rnn_forward(z, self.o_len, self.rnn, self.last)
-    
+        initial_state = (
+            torch.zeros([self.num_layers, z.shape[0], self.hidden_size], device = z.device), 
+            torch.zeros([self.num_layers, z.shape[0], self.hidden_size], device = z.device)
+        )
+        #state = (z.unsqueeze(dim = 1), z.unsqueeze(dim = 1))
+        #output, state = self.rnn(x, state)
+        #output = output[:, -1]
+        state = initial_state
+        x = z
+        output = []
+        for i in range(self.o_len):
+            x, state = self.rnn(x, state)
+            x = x[:, -1]
+            x = self.last(x)
+            x = x.unsqueeze(dim=1)
+            output.append(x)
+        output = torch.cat(output, dim=1)
+        return output    

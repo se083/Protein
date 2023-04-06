@@ -56,11 +56,16 @@ class CVAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        z = torch.cat((y.view(-1, prod(y.shape[1:])), z), 1) # combine ts with z
-        return torch.cat((y,self.decoder(z)),1)
+        z = z.unsqueeze(dim = -2)
+        z = z.repeat(1, y.shape[-2], 1)
+        z = torch.cat((y, z), -1)
+        #z = torch.cat((y.view(-1, prod(y.shape[1:])), z), 1) outdated
+        x_reconstructed = self.decoder(z)
+        x_y_reconstructed = torch.cat((y,x_reconstructed),1)
+        return x_y_reconstructed
 
     def loss_function(self, recon_x, x, **kwargs):
-        recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
+        recon_loss = F.cross_entropy(recon_x, x, reduction='none')
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
         #recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
         recon_loss = torch.sum((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])
