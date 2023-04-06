@@ -1,5 +1,5 @@
 import models.rnn as rnn
-from models.rnn import rnn_forward, VaeRNNDecoder
+from models.rnn import VaeRNNDecoder
 
 import torch
 import torch.utils.data
