@@ -37,7 +37,7 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
         z_found, y_onehotdist = utp.z_search(decoder=model.decoder, z_values=z_train, compare_to_oh=yx_oh[test_index[0],:ts_len], ts_len=ts_len, n_sampling=40000, out_samples=out_samples, loops=3, zoom=0.25)
     else:
         z_found = utp.z_unif_sampling(z_values=z_train, n_samples=out_samples)
-        if 'CNN' in model_type:
+        if 'CNN' in model_type or 'RNN' in model_type:
             y = yx_oh[test_index[0],:ts_len]
             z_found = np.expand_dims(z_found, axis = -2)
             y = np.expand_dims(y, axis = 0)
