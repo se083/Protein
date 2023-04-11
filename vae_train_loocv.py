@@ -10,6 +10,8 @@ import pandas as pd
 from collections import defaultdict
 import subprocess
 import argparse
+import torch
+import random
 
 
 def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):
@@ -172,8 +174,12 @@ if __name__ == '__main__':
     parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space', dest='specific_libs')
     parser.add_argument('-n','--n_models', nargs='?', default=1, type=int, help='default = %(default)s; number of models to train for each leave one out', dest='n_models')
     parser.add_argument('--n_out', nargs='?', default=1000, type=int, help='default = %(default)s; number of predictions to make for each model and library', dest='n_out')
+    parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
 
     args = parser.parse_args()
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    random.seed(args.seed)
 
     ts_slice_options = {'half':list(range(13)),'+pos14':list(range(14)) + [20], 'donut':list(range(14)) + list(range(20,34)), 'full':list(range(34)) }
     ts_subset_index = ts_slice_options[args.ts_slice]
