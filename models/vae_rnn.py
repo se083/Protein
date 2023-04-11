@@ -1,5 +1,4 @@
-import models.rnn as rnn
-from models.rnn import VaeRNNDecoder
+import models.rnn as VaeRNNDecoder
 
 import torch
 import torch.utils.data
@@ -25,37 +24,23 @@ class VaeEncoder(nn.Module):
         self.fc_logvar = nn.Linear(layer_sizes[-2], layer_sizes[-1])
 
     def forward(self, x):
-        y = x[:,:self.ts_len] # target site part
         initial_state = (
-            torch.zeros([x.shape[0], self.num_layers, self.hidden_size]), 
-            torch.zeros([x.shape[0], self.num_layers, self.hidden_size])
+            torch.zeros([self.num_layers, x.shape[0], self.hidden_size], device = x.device), 
+            torch.zeros([self.num_layers, x.shape[0], self.hidden_size], device = x.device)
         )
         output, (h, c) = self.rnn(x, initial_state)
         x = output[:, -1]
         return self.fc_mu(x), self.fc_logvar(x)
 
-
-# class VaeDecoder(nn.Module):
-#     def __init__(self, layer_sizes, output_shape, **kwargs):
-#         super(VaeDecoder, self).__init__()
-#         self.fc_blocks = nn.Sequential(*[fc_block(in_size, out_size, **kwargs) for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:-1])])
-#         self.fc_last = nn.Linear(layer_sizes[-2],layer_sizes[-1])
-#         self.sigmoid = nn.Sigmoid()
-#         self.unflatten = UnFlatten(output_shape)
-
-#     def forward(self, x):
-#         x = self.fc_blocks(x)
-#         x = self.fc_last(x)
-#         x = self.sigmoid(x)
-#         return self.unflatten(x)
-
-
+import torch
+import torch.nn as nn
+    
 class VAE(nn.Module):
     def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
         super(VAE, self).__init__()
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
-        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
+        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
@@ -69,7 +54,7 @@ class VAE(nn.Module):
         return self.decoder(z)
 
     def loss_function(self, recon_x, x, **kwargs):
-        recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
+        recon_loss = F.cross_entropy(recon_x, x, reduction='none')
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
         #recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
         recon_loss = torch.sum((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])

@@ -23,6 +23,7 @@ class VaeRNNDecoder(nn.Module):
             bidirectional = False
         )
         self.last = nn.Linear(self.hidden_size, o_channels)
+        self.first = nn.Linear(latent_size, t_channels + latent_size)
         #self.block = deconv_decoder(layer_sizes, output_shape)
 
     def forward(self, z):
@@ -35,6 +36,9 @@ class VaeRNNDecoder(nn.Module):
         #output = output[:, -1]
         state = initial_state
         x = z
+        if len(z.shape) == 2:
+            x = self.first(x)
+            x = x.unsqueeze(dim = 1)
         output = []
         for i in range(self.o_len):
             x, state = self.rnn(x, state)

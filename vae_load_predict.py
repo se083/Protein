@@ -57,7 +57,11 @@ yx_oh = utils.get_one_hot(yx_ind, len(vocab_list))
 # convert target sequences to one hot
 y_pred_ind = np.array(utils.seqaln_to_indices(target_sequence,vocab_list))
 y_pred_oh = utils.get_one_hot(y_pred_ind, len(vocab_list))
-ts_oh = np.repeat(np.reshape(a=y_pred_oh, newshape=(len(target_sequence),ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
+if 'CNN' in params['model_type'] or 'RNN' in params['model_type']:
+    ts_oh = np.expand_dims(y_pred_oh, axis = 0)
+    ts_oh = np.repeat(ts_oh, repeats=out_samples, axis=0)
+else:
+    ts_oh = np.repeat(np.reshape(a=y_pred_oh, newshape=(len(target_sequence),ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
 
 ###### Predict ########
 
@@ -67,8 +71,12 @@ for i in model_files:
     model = torch.load(modeldir + '/' + i)
 
     z_train = training.model_predict(model.encoder, yx_oh, 10000)
+    
 
     z_found = utp.z_unif_sampling(z_values=z_train, n_samples=len(target_sequence)*out_samples)
+    if 'CNN' in params['model_type'] or 'RNN' in params['model_type']:
+        z_found = np.expand_dims(z_found, axis = -2)
+        z_found = np.repeat(z_found, repeats=ts_oh.shape[-2], axis=-2)
     z_found = np.concatenate((ts_oh,z_found),1)
 
     yx_pred_zsearch_ind = utp.predict_and_index(model.decoder, z_found, 0)
