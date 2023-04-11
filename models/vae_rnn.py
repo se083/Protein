@@ -1,4 +1,4 @@
-import models.rnn as VaeRNNDecoder
+from models.rnn import VaeRNNDecoder
 
 import torch
 import torch.utils.data

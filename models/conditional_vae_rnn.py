@@ -1,4 +1,3 @@
-import models.rnn as rnn
 from models.rnn import VaeRNNDecoder
 
 import torch
