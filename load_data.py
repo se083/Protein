@@ -33,3 +33,31 @@ def split_train_test(combdf, by = 'target_sequence_subset', train_split = 0.9):
     test_index = combdf.drop(train_index).index.sort_values()
     return train_index, test_index
 
+def strip_protein(line):
+    return ''.join([c for c in line if c.isupper() or c == '-'])
+
+def load_txt(file_path):
+    with open(file_path) as f:
+        sequences = []
+        identifiers = []
+        for line in f:
+            line = line.strip()
+            if line.startswith('>'):
+                sequences.append('')
+                identifiers.append(line[1:])
+            else:
+                sequences[-1] += strip_protein(line)  
+    assert len(sequences) == len(identifiers)
+    df = pd.DataFrame({
+        'Identifier':identifiers, 
+        'Sequence': sequences
+    })
+    return df  
+
+def load_unlabeled(file):
+    # get input
+    df = load_txt(file)
+    df['combined_sequence'] = df.Sequence
+    return df
+#might change column names
+
