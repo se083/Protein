@@ -35,6 +35,7 @@ parser.add_argument('-d','--dropout_p', nargs='?', default=0.1, type=float, help
 parser.add_argument('-D','--num_embeddings', nargs='?', default=10, type=int, help='default = %(default)s; VQ_VAE only, number of "categories" to embed', dest='num_embeddings')
 parser.add_argument('-K','--embedding_dim', nargs='?', default=1, type=int, help='default = %(default)s; VQ_VAE only, number of values to represent each embedded "category"', dest='embedding_dim')
 parser.add_argument('-n','--n_models', nargs='?', default=1, type=int, help='default = %(default)s; number of models to train', dest='n_models')
+parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
 
 args = parser.parse_args()
 
@@ -74,6 +75,9 @@ for i in range(0,args.n_models):
         latent_size=args.latent_size,
         ts_len=len(ts_subset_index),
         layer_kwargs={'batchnorm':args.batch_norm, 'dropout_p':args.dropout_p})
+    if args.pre_model is not None:
+        weights = torch.load(args.pre_model)
+        model.load_state_dict(weights)
 
     model, losses = training.model_training(model, yx_oh, yx_oh, epochs=args.epochs, batch_size=args.batch_size, loss_kwargs={'beta':args.beta}, optimizer_kwargs={'lr':args.learning_rate})
 

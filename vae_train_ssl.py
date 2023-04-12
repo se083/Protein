@@ -70,4 +70,5 @@ for i in range(0,args.n_models):
     model, losses = training.model_training(model, yx_oh, yx_oh, epochs=args.epochs, batch_size=args.batch_size, loss_kwargs={'beta':args.beta}, optimizer_kwargs={'lr':args.learning_rate})
 
     # save model
+    torch.save(model.state_dict(), folderstr + '/' + args.model_type + '_weights' + '_' + str(i) + '.pt')
     torch.save(model, folderstr + '/' + args.model_type + '_' + str(i) + '.pt')
