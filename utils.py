@@ -5,7 +5,7 @@ import sys
 import os
 
 # onehot conversion functions and lookuptable
-vocab_list = ["A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "_", "-"]
+vocab_list = ["A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "_", "-", "X"]
 
 
 def seqaln_to_indices(sequences, vocab_list):
