@@ -236,8 +236,8 @@ from unittest.mock import patch
 import sys
 if __name__ == '__main__':
     for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:
-        for es in [1, 10, 50, 100]:
-            for bs in [64, 128, 256]:
+        for es in [1, 10, 50]:
+            for bs in [64, 128, 512]:
                 for las in [2, 4, 6]:
                     for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
                         lys = ' '.join(str(x) for x in lys)

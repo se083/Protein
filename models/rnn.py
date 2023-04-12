@@ -9,7 +9,7 @@ class VaeRNNDecoder(nn.Module):
         #self.fc_last = nn.Linear(layer_sizes[-2],layer_sizes[-1])
         #self.sigmoid = nn.Sigmoid()
         #self.unflatten = UnFlatten(output_shape)
-        self.t_len, t_channels, latent_size = layer_sizes[0]
+        _, t_channels, latent_size = layer_sizes[0]
         self.o_len, o_channels = output_shape    
         hidden_channels = layer_sizes[1]
         self.hidden_size = latent_size + o_channels
