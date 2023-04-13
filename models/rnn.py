@@ -9,7 +9,7 @@ class VaeRNNDecoder(nn.Module):
         #self.fc_last = nn.Linear(layer_sizes[-2],layer_sizes[-1])
         #self.sigmoid = nn.Sigmoid()
         #self.unflatten = UnFlatten(output_shape)
-        _, t_channels, latent_size = layer_sizes[0]
+        self.t_len, t_channels, latent_size = layer_sizes[0]
         self.o_len, o_channels = output_shape    
         hidden_channels = layer_sizes[1]
         self.hidden_size = latent_size + o_channels
@@ -48,4 +48,6 @@ class VaeRNNDecoder(nn.Module):
             output.append(o)
             x = x.unsqueeze(dim=1)
         output = torch.cat(output, dim=1)
+        if self.t_len > 0: # if we're fine-tuning, we don't want to predict -, X, or Z
+            output[:, :, -3:] += -1e6
         return output    

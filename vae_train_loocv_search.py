@@ -241,7 +241,7 @@ if __name__ == '__main__':
                 for las in [2, 4, 6]:
                     for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
                         lys = ' '.join(str(x) for x in lys)
-                        settings = f'--outfolder /content/drive/MyDrive/Data/Protein/RNN_loocv \
+                        settings = f'vae --outfolder /content/drive/MyDrive/Data/Protein/RNN_loocv \
                                 --input_data /content/drive/MyDrive/Data/Protein/published_YSSR_sequence_data_translated_copy.csv \
                                 --epochs {es}\
                                 --batch_size {bs}\
