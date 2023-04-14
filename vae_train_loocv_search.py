@@ -232,23 +232,29 @@ def full_main():
     for key, value in out_collect.items():
         value.to_csv(folderstr + '/' + key + '.csv', index = False)
 
-from unittest.mock import patch
 import sys
 if __name__ == '__main__':
-    for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:
-        for es in [1, 10, 50]:
-            for bs in [64, 128, 512]:
-                for las in [2, 4, 6]:
-                    for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
-                        lys = ' '.join(str(x) for x in lys)
-                        settings = f'vae --outfolder /content/drive/MyDrive/Data/Protein/RNN_loocv \
-                                --input_data /content/drive/MyDrive/Data/Protein/published_YSSR_sequence_data_translated_copy.csv \
-                                --epochs {es}\
-                                --batch_size {bs}\
-                                --latent_size {las}\
-                                --layer_sizes {lys}\
-                                --model_type {model}'
-                        print(settings.split())
-                        sys.argv = settings.split()
-                        full_main()
+    parser = argparse.ArgumentParser(description='Train VAEs and perform leave-one-out cross-validation.')
+    parser.add_argument('-o','--outfolder', nargs='?', default='output_loocv/', type=str, help='default = %(default)s; output folder for saving results')
+    parser.add_argument('-i','--input_data', nargs='?', default='example_input/training_data_masked.csv', type=str, help='default = %(default)s; csv input table containing the columns target_sequence and Sequence (recombinase in amino acid).')
+    parser.add_argument('-m','--model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE')
+    parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space')
+    args = parser.parse_args()
+    #for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:
+    for es in [1, 10, 50]:
+        for bs in [64, 128, 512]:
+            for las in [2, 4, 6]:
+                for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
+                    lys = ' '.join(str(x) for x in lys)
+                    settings = f'vae --outfolder {args.outfolder} \
+                            --input_data {args.input_data} \
+                            --epochs {es}\
+                            --batch_size {bs}\
+                            --latent_size {las}\
+                            --layer_sizes {lys}\
+                            --model_type {args.model_type}\
+                            --specific_libs {args.specific_libs}'
+                    print(settings.split())
+                    sys.argv = settings.split()
+                    full_main()
 
