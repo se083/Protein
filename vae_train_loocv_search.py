@@ -233,6 +233,8 @@ def full_main():
         value.to_csv(folderstr + '/' + key + '.csv', index = False)
 
 import sys
+import os
+import shutil
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train VAEs and perform leave-one-out cross-validation.')
     parser.add_argument('-o','--outfolder', nargs='?', default='output_loocv/', type=str, help='default = %(default)s; output folder for saving results')
@@ -247,7 +249,14 @@ if __name__ == '__main__':
                 for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
                     lys = ' '.join(str(x) for x in lys)
                     libs = ' '.join(args.specific_libs)
-                    settings = f'vae --outfolder {args.outfolder} \
+                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lys}-{las}-{libs}')
+                    if os.path.exists(model_folder):
+                        pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                        if os.path.exists(pred_path):
+                            continue
+                        else:
+                            shutil.rmtree(model_folder)
+                    settings = f'vae --outfolder {model_folder} \
                             --input_data {args.input_data} \
                             --epochs {es}\
                             --batch_size {bs}\
