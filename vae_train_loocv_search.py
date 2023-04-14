@@ -249,7 +249,7 @@ if __name__ == '__main__':
                 for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
                     lys = ' '.join(str(x) for x in lys)
                     libs = ' '.join(args.specific_libs)
-                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lys}-{las}-{libs}')
+                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lys.replace(" ", "_")}-{las}-{libs.replace(" ", "_")}')
                     if os.path.exists(model_folder):
                         pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
                         if os.path.exists(pred_path):
