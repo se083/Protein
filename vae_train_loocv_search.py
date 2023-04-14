@@ -246,6 +246,7 @@ if __name__ == '__main__':
             for las in [2, 4, 6]:
                 for lys in [[32, 16], [64, 32, 16], [128, 64, 32, 16]]:
                     lys = ' '.join(str(x) for x in lys)
+                    libs = ' '.join(args.specific_libs)
                     settings = f'vae --outfolder {args.outfolder} \
                             --input_data {args.input_data} \
                             --epochs {es}\
@@ -253,7 +254,7 @@ if __name__ == '__main__':
                             --latent_size {las}\
                             --layer_sizes {lys}\
                             --model_type {args.model_type}\
-                            --specific_libs {args.specific_libs}'
+                            --specific_libs {libs}'
                     print(settings.split())
                     sys.argv = settings.split()
                     full_main()
