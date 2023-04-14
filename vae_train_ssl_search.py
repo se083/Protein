@@ -11,6 +11,7 @@ from collections import defaultdict
 import subprocess
 import argparse
 
+
 def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):
     # loss
     loss_df['TargetSequence'] = leave_out_y
@@ -266,15 +267,4 @@ if __name__ == '__main__':
                     print(settings.split())
                     sys.argv = settings.split()
                     full_main()
-                    # settings = f'vae --outfolder {model_folder} \
-                    #         --input_data {args.input_data} \
-                    #         --epochs {es}\
-                    #         --batch_size {bs}\
-                    #         --latent_size {las}\
-                    #         --layer_sizes {lys}\
-                    #         --model_type {args.model_type}\
-                    #         --specific_libs {libs}'
-                    # print(settings.split())
-                    # sys.argv = settings.split()
-                    # full_main()
 
