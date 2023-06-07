@@ -153,8 +153,6 @@ def full_main():
     parser = argparse.ArgumentParser(description='Train VAEs and perform leave-one-out cross-validation.')
     parser.add_argument('-o','--outfolder', nargs='?', default='output_loocv/', type=str, help='default = %(default)s; output folder for saving results', dest='outprefix')
     parser.add_argument('-i','--input_data', nargs='?', default='example_input/training_data_masked.csv', type=str, help='default = %(default)s; csv input table containing the columns target_sequence and Sequence (recombinase in amino acid).', dest='input_data')
-    parser.add_argument('-ptm','--pre-train_model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='pre-train_model_type')
-    parser.add_argument('-ftm','--fine-tune_model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='fine-tune_model_type')
     parser.add_argument('-z','--latent_size', nargs='?', default=2, type=int, help='default = %(default)s; the latent size dimensions', dest='latent_size')
     parser.add_argument('-l','--layer_sizes', nargs='*', default=[64,32], type=int, help='default = %(default)s; the hidden layer dimensions in the model', dest='layer_sizes')
     parser.add_argument('-b','--batch_size', nargs='?', default=128, type=int, help='default = %(default)s; the number of samples in each processing batch', dest='batch_size')
@@ -240,7 +238,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train VAEs and perform leave-one-out cross-validation.')
     parser.add_argument('-o','--outfolder', nargs='?', default='output_loocv/', type=str, help='default = %(default)s; output folder for saving results')
     parser.add_argument('-i','--input_data', nargs='?', default='example_input/training_data_masked.csv', type=str, help='default = %(default)s; csv input table containing the columns target_sequence and Sequence (recombinase in amino acid).')
-    parser.add_argument('-m','--model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE')
+    parser.add_argument('-ptm','--pre_train_model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='pre_train_model_type')
+    parser.add_argument('-ftm','--fine_tune_model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='fine_tune_model_type')
     parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space')
     args = parser.parse_args()
     #for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:
@@ -258,7 +257,7 @@ if __name__ == '__main__':
                         --input_data {args.input_data} \
                         --epochs {es}\
                         --batch_size {bs}\
-                        --model_type {args.model_type}\
+                        --model_type {args.pre_train_model_type}\
                         --learning_rate {lr}\
                         --specific_libs {args.libs}'
                 print(settings.split())
@@ -269,7 +268,7 @@ if __name__ == '__main__':
                         --epochs 1\
                         --batch_size 32\
                         --latent_size 2\
-                        --model_type {args.model_type}\
+                        --model_type {args.fine_tune_model_type}\
                         --learning_rate {lr}\
                         --specific_libs {args.libs}'
                 print(settings.split())
