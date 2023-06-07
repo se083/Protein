@@ -1,3 +1,4 @@
+import models.rnn as rnn
 from models.rnn import VaeRNNDecoder
 
 import torch
@@ -59,9 +60,7 @@ class CVAE(nn.Module):
         z = z.repeat(1, y.shape[-2], 1)
         z = torch.cat((y, z), -1)
         #z = torch.cat((y.view(-1, prod(y.shape[1:])), z), 1) outdated
-        x_reconstructed = self.decoder(z)
-        x_y_reconstructed = torch.cat((y,x_reconstructed),1)
-        return x_y_reconstructed
+        return torch.cat((y,self.decoder(z)),1)
 
     def loss_function(self, recon_x, x, **kwargs):
         recon_loss = F.cross_entropy(recon_x, x, reduction='none')
