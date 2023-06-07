@@ -246,7 +246,7 @@ if __name__ == '__main__':
     for es in [1, 10, 50]:
         for bs in [64, 128, 512]:
             for lr in [1e-2, 1e-3, 1e-4]:
-                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{args.libs.replace(" ", "_")}')
+                model_folder = os.path.join(args.outfolder, f'ssl_{es}-{bs}-{lr}-{args.specific_libs.replace(" ", "_")}')
                 if os.path.exists(model_folder):
                     pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
                     if os.path.exists(pred_path):
@@ -259,7 +259,7 @@ if __name__ == '__main__':
                         --batch_size {bs}\
                         --model_type {args.pre_train_model_type}\
                         --learning_rate {lr}\
-                        --specific_libs {args.libs}'
+                        --specific_libs {args.specific_libs}'
                 print(settings.split())
                 sys.argv = settings.split()
                 pre_main()
@@ -270,7 +270,7 @@ if __name__ == '__main__':
                         --latent_size 2\
                         --model_type {args.fine_tune_model_type}\
                         --learning_rate {lr}\
-                        --specific_libs {args.libs}'
+                        --specific_libs {args.specific_libs}'
                 print(settings.split())
                 sys.argv = settings.split()
                 full_main()
