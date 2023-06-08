@@ -126,6 +126,7 @@ def main(
     if specific_libs == 'all':
         uts = pd.unique(combdf.target_sequence_subset)
     else:
+        print(specific_libs)
         uts = pd.unique(combdf.target_sequence_subset[combdf.trained_target_site.isin(specific_libs)])
         if len(uts) == 0:
             print('no valid libraries named!')
