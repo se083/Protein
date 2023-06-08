@@ -123,7 +123,7 @@ def main(
     out_dict = defaultdict(list)
 
     # loop through all possible leave one out testings
-    if specific_libs == 'all':
+    if specific_libs == 'all' or (len(specific_libs)==1 and specific_libs[0] == 'all'):
         uts = pd.unique(combdf.target_sequence_subset)
     else:
         print(specific_libs)
