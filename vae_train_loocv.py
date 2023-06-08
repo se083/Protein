@@ -103,7 +103,8 @@ def main(
     summary_function=np.min,
     hamming_cutoff=1,
     specific_libs = 'all',
-    n_out = 1000):
+    n_out = 1000,
+    pre_model = None):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -141,6 +142,9 @@ def main(
 
         model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, layer_kwargs={'dropout_p':dropout_p})
         #load the model 
+        if pre_model is not None:
+            weights = torch.load(pre_model)
+            model.load_state_dict(weights)
         model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate})
 
         out_dict = analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out)
@@ -176,6 +180,7 @@ def full_main():
     parser.add_argument('-n','--n_models', nargs='?', default=1, type=int, help='default = %(default)s; number of models to train for each leave one out', dest='n_models')
     parser.add_argument('--n_out', nargs='?', default=1000, type=int, help='default = %(default)s; number of predictions to make for each model and library', dest='n_out')
     parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
+    parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -214,7 +219,8 @@ def full_main():
             summary_function = summary_function,
             hamming_cutoff = args.hamming_cutoff,
             specific_libs = args.specific_libs,
-            n_out = args.n_out)
+            n_out = args.n_out,
+            pre_model = args.pre_model)
 
         # collect output data frames in lists and add the model_nr
         for key, value in out.items():

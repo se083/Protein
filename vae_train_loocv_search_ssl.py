@@ -263,6 +263,7 @@ if __name__ == '__main__':
                 print(settings.split())
                 sys.argv = settings.split()
                 pre_train()
+                pre_model = model_folder + '/' + args.pre_train_model_type + '_weights' + '_' + str(0) + '.pt'
                 settings = f'vae --outfolder {model_folder} \
                         --input_data /content/drive/MyDrive/Data/Protein/published_YSSR_sequence_data_translated_copy.csv \
                         --epochs 1\
@@ -270,7 +271,8 @@ if __name__ == '__main__':
                         --latent_size 2\
                         --model_type {args.fine_tune_model_type}\
                         --learning_rate {lr}\
-                        --specific_libs {args.specific_libs}'
+                        --specific_libs {args.specific_libs}\
+                        --pre_model {pre_model}'
 
                 # for lib in args.specific_libs:
                 #     settings+=f' --specific_libs {lib}'
