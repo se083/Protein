@@ -139,6 +139,7 @@ def main(
         train_index, test_index = utp.leave_out_indices(combdf.target_sequence_subset, leave_out_y, yx_ind[:,:ts_len], hamming_cutoff=hamming_cutoff)
 
         model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, layer_kwargs={'dropout_p':dropout_p})
+        #load the model 
         model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate})
 
         out_dict = analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out)
@@ -149,8 +150,7 @@ def main(
     return out_dict
 
 
-if __name__ == '__main__':
-
+def full_main():
     # argument parser
     parser = argparse.ArgumentParser(description='Train VAEs and perform leave-one-out cross-validation.')
     parser.add_argument('-o','--outfolder', nargs='?', default='output_loocv/', type=str, help='default = %(default)s; output folder for saving results', dest='outprefix')
@@ -237,3 +237,6 @@ if __name__ == '__main__':
     # save all dataframes
     for key, value in out_collect.items():
         value.to_csv(folderstr + '/' + key + '.csv', index = False)
+
+if __name__ == '__main__':
+    full_main()

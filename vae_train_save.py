@@ -84,3 +84,6 @@ def main():
 
         # save model
         torch.save(model, folderstr + '/' + args.model_type + '_' + str(i) + '.pt')
+
+if __name__ == "__main__":
+    main()
