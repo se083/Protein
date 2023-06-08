@@ -269,10 +269,11 @@ if __name__ == '__main__':
                         --batch_size 32\
                         --latent_size 2\
                         --model_type {args.fine_tune_model_type}\
-                        --learning_rate {lr}'
-                for lib in args.specific_libs:
-                    settings+=f' --specific_libs {lib}'
-                        # --specific_libs {args.specific_libs}'
+                        --learning_rate {lr}\
+                        --specific_libs {args.specific_libs}'
+
+                # for lib in args.specific_libs:
+                #     settings+=f' --specific_libs {lib}'
                 print(settings.split())
                 sys.argv = settings.split()
                 full_main()
