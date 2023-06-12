@@ -14,7 +14,8 @@ class VaeRNNDecoder(nn.Module):
         hidden_channels = layer_sizes[1]
         # self.hidden_size = latent_size + o_channels
         self.hidden_size = layer_sizes[-2]
-        self.num_layers = len(layer_sizes)-2
+        # self.num_layers = len(layer_sizes)-2
+        self.num_layers = 1
         self.rnn = nn.LSTM(
             input_size = self.hidden_size, 
             hidden_size = self.hidden_size,
