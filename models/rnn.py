@@ -12,10 +12,11 @@ class VaeRNNDecoder(nn.Module):
         self.t_len, t_channels, latent_size = layer_sizes[0]
         self.o_len, o_channels = output_shape    
         hidden_channels = layer_sizes[1]
-        self.hidden_size = latent_size + o_channels
+        # self.hidden_size = latent_size + o_channels
+        self.hidden_size = layer_sizes[-2]
         self.num_layers = len(layer_sizes)-2
         self.rnn = nn.LSTM(
-            input_size = t_channels + latent_size, 
+            input_size = self.hidden_size, 
             hidden_size = self.hidden_size,
             num_layers = self.num_layers, #can play around with later
             batch_first = True,
@@ -24,6 +25,7 @@ class VaeRNNDecoder(nn.Module):
         )
         self.last = nn.Linear(self.hidden_size, o_channels)
         self.first = nn.Linear(latent_size, t_channels + latent_size)
+        self.resize = nn.Linear(t_channels + latent_size, self.hidden_size)
         #self.block = deconv_decoder(layer_sizes, output_shape)
 
     def forward(self, z):
@@ -39,6 +41,7 @@ class VaeRNNDecoder(nn.Module):
         if len(z.shape) == 2:
             x = self.first(x)
             x = x.unsqueeze(dim = 1)
+        x = self.resize(x)
         output = []
         for i in range(self.o_len):
             x, state = self.rnn(x, state)
@@ -48,6 +51,6 @@ class VaeRNNDecoder(nn.Module):
             output.append(o)
             x = x.unsqueeze(dim=1)
         output = torch.cat(output, dim=1)
-        if self.t_len > 0: # if we're fine-tuning, we don't want to predict -, X, or Z
-            output[:, :, -3:] += -1e6
+        if self.t_len > 0: # if we're fine-tuning, we don't want to predict - or _
+            output[:, :, -2:] += -1e6
         return output    

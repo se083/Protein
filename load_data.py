@@ -33,8 +33,13 @@ def split_train_test(combdf, by = 'target_sequence_subset', train_split = 0.9):
     test_index = combdf.drop(train_index).index.sort_values()
     return train_index, test_index
 
+def transform_protein(c):
+    if c == 'X' or c == 'Z' or c == 'B':
+        c = '-'
+    return c
+
 def strip_protein(line):
-    return ''.join([c for c in line if c.isupper() or c == '-'])
+    return ''.join([transform_protein(c) for c in line if c.isupper() or c == '-'])
 
 def load_txt(file_path):
     with open(file_path) as f:
