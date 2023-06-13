@@ -243,40 +243,43 @@ if __name__ == '__main__':
     parser.add_argument('-ftm','--fine_tune_model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='fine_tune_model_type')
     parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space')
     args = parser.parse_args()
-    #for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:
-    for es in [1, 10, 50]:
-        for bs in [64, 128, 512]:
-            for lr in [1e-2, 1e-3, 1e-4]:
-                model_folder = os.path.join(args.outfolder, f'ssl_{es}-{bs}-{lr}-{args.specific_libs.replace(" ", "_")}')
-                if os.path.exists(model_folder):
-                    pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-                    if os.path.exists(pred_path):
-                        continue
-                    else:
-                        shutil.rmtree(model_folder)
-                settings = f'vae --outfolder {model_folder} \
-                        --input_data {args.input_data} \
-                        --epochs {es}\
-                        --batch_size {bs}\
-                        --model_type {args.pre_train_model_type}\
-                        --learning_rate {lr}'
-                print(settings.split())
-                sys.argv = settings.split()
-                pre_train()
-                pre_model = model_folder + '/' + args.pre_train_model_type + '_weights' + '_' + str(0) + '.pt'
-                settings = f'vae --outfolder {model_folder} \
-                        --input_data /content/drive/MyDrive/Data/Protein/published_YSSR_sequence_data_translated_copy.csv \
-                        --epochs 1\
-                        --batch_size 32\
-                        --latent_size 2\
-                        --model_type {args.fine_tune_model_type}\
-                        --learning_rate {lr}\
-                        --specific_libs {args.specific_libs}\
-                        --pre_model {pre_model}'
+    #for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:    
+    for lys in [[512, 512], [1024, 1024], [256, 256]]:
+        for lr in [1e-3, 1e-4, 1e-5]:
+            lys = ' '.join(str(x) for x in lys)
+            bs = 128
+            es = 20
+            las = 2
+            model_folder = os.path.join(args.outfolder, f'ssl_{es}-{bs}-{lr}-{args.specific_libs.replace(" ", "_")}')
+            if os.path.exists(model_folder):
+                pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                if os.path.exists(pred_path):
+                    continue
+                else:
+                    shutil.rmtree(model_folder)
+            settings = f'vae --outfolder {model_folder} \
+                    --input_data {args.input_data} \
+                    --epochs {es}\
+                    --batch_size {bs}\
+                    --model_type {args.pre_train_model_type}\
+                    --learning_rate {lr}'
+            print(settings.split())
+            sys.argv = settings.split()
+            pre_train()
+            pre_model = model_folder + '/' + args.pre_train_model_type + '_weights' + '_' + str(0) + '.pt'
+            settings = f'vae --outfolder {model_folder} \
+                    --input_data /content/drive/MyDrive/Data/Protein/published_YSSR_sequence_data_translated_copy.csv \
+                    --epochs {es}\
+                    --batch_size {bs}\
+                    --latent_size {las}\
+                    --model_type {args.fine_tune_model_type}\
+                    --learning_rate {lr}\
+                    --specific_libs {args.specific_libs}\
+                    --pre_model {pre_model}'
 
-                # for lib in args.specific_libs:
-                #     settings+=f' --specific_libs {lib}'
-                print(settings.split())
-                sys.argv = settings.split()
-                full_main()
+            # for lib in args.specific_libs:
+            #     settings+=f' --specific_libs {lib}'
+            print(settings.split())
+            sys.argv = settings.split()
+            full_main()
 
