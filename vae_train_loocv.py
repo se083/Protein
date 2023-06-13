@@ -142,7 +142,7 @@ def main(
         train_index, test_index = utp.leave_out_indices(combdf.target_sequence_subset, leave_out_y, yx_ind[:,:ts_len], hamming_cutoff=hamming_cutoff)
 
         model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, layer_kwargs={'dropout_p':dropout_p})
-        summary(model, input_size = (357,25))
+        summary(model, input_size = (357,22))
         #load the model 
         if pre_model is not None:
             weights = torch.load(pre_model)
