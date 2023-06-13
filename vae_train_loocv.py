@@ -12,6 +12,7 @@ import subprocess
 import argparse
 import torch
 import random
+from torchsummary import summary
 
 
 def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):
@@ -141,7 +142,7 @@ def main(
         train_index, test_index = utp.leave_out_indices(combdf.target_sequence_subset, leave_out_y, yx_ind[:,:ts_len], hamming_cutoff=hamming_cutoff)
 
         model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, layer_kwargs={'dropout_p':dropout_p})
-        # model.summary()
+        summary(model, input_size = (357,25))
         #load the model 
         if pre_model is not None:
             weights = torch.load(pre_model)
