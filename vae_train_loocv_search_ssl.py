@@ -247,6 +247,7 @@ if __name__ == '__main__':
     for lys in [[512, 512], [1024, 1024], [256, 256]]:
         for lr in [1e-3, 1e-4, 1e-5]:
             lys = ' '.join(str(x) for x in lys)
+            libs = ' '.join(args.specific_libs)
             bs = 128
             es = 20
             las = 2
