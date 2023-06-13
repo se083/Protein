@@ -19,7 +19,7 @@ class VaeEncoder(nn.Module):
         #       for in_size, out_size in zip(layer_sizes[:-2], layer_sizes[1:-1])]
         # )
         self.hidden_size = layer_sizes[-2]
-        self.num_layers = 2
+        self.num_layers = 1
         self.rnn = nn.LSTM(
             input_size = layer_sizes[1], 
             hidden_size = self.hidden_size,
