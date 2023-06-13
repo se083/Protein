@@ -34,7 +34,7 @@ if __name__ == '__main__':
             libs = ' '.join(args.specific_libs)
             es = 20
             las = 2
-            model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-1')
+            model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-2')
             if os.path.exists(model_folder):
                 pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
                 if os.path.exists(pred_path):
