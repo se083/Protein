@@ -27,7 +27,6 @@ class VaeRNNDecoder(nn.Module):
         self.last = nn.Linear(self.hidden_size, o_channels)
         self.first = nn.Linear(latent_size, t_channels + latent_size)
         self.resize = nn.Linear(t_channels + latent_size, self.hidden_size)
-        self.sigmoid = nn.Sigmoid()
         #self.block = deconv_decoder(layer_sizes, output_shape)
 
     def forward(self, z):
@@ -55,4 +54,4 @@ class VaeRNNDecoder(nn.Module):
         output = torch.cat(output, dim=1)
         if self.t_len > 0: # if we're fine-tuning, we don't want to predict - or _
             output[:, :, -2:] += -1e6
-        return self.sigmoid(output)    
+        return output
