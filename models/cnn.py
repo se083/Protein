@@ -85,6 +85,7 @@ class VaeCNNDecoder(nn.Module):
         #self.sigmoid = nn.Sigmoid()
         #self.unflatten = UnFlatten(output_shape)
         self.block = deconv_decoder(layer_sizes, output_shape)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         #x = self.fc_blocks(x)
@@ -93,4 +94,5 @@ class VaeCNNDecoder(nn.Module):
         #return self.unflatten(x)
         x = x.transpose(1, 2)
         x_y = self.block(x)
-        return x_y.transpose(1,2)
+        x_y = x_y.transpose(1,2)
+        return self.sigmoid(x_y)
