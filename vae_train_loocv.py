@@ -14,6 +14,8 @@ import torch
 import random
 from torchsummary import summary
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):
     # loss
@@ -143,7 +145,8 @@ def main(
 
         model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, layer_kwargs={'dropout_p':dropout_p})
         model.to('cuda')
-        summary(model, input_size = (357,22))
+        # summary(model, input_size = (357,22))
+        print(f'{count_parameters(model):,}')
         #load the model 
         if pre_model is not None:
             weights = torch.load(pre_model)
