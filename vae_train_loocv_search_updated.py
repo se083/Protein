@@ -27,29 +27,29 @@ if __name__ == '__main__':
     #     for bs in [64, 128, 512]:
     #         for lr in [1e-3, 1e-4, 1e-5]:
     #             for las in [2, 4, 6]:
-    for lr in [1e-3, 1e-4, 1e-5]:
-        lys = args.layer_sizes
-        lys = ' '.join(str(x) for x in lys)
-        libs = ' '.join(args.specific_libs)
-        es = 20
-        bs = 128
-        las = 2
-        model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}')
-        if os.path.exists(model_folder):
-            pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-            if os.path.exists(pred_path):
-                continue
-            else:
-                shutil.rmtree(model_folder)
-        settings = f'vae --outfolder {model_folder} \
-                --input_data {args.input_data} \
-                --epochs {es}\
-                --batch_size {bs}\
-                --latent_size {las}\
-                --layer_sizes {lys}\
-                --model_type {args.model_type}\
-                --learning_rate {lr}\
-                --specific_libs {libs}'
-        print(settings.split())
-        sys.argv = settings.split()
-        full_main()
+    for bs in [128, 64, 32]:
+        for lr in [1e-3, 1e-4, 1e-5]:
+            lys = args.layer_sizes
+            lys = ' '.join(str(x) for x in lys)
+            libs = ' '.join(args.specific_libs)
+            es = 20
+            las = 2
+            model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-2')
+            if os.path.exists(model_folder):
+                pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                if os.path.exists(pred_path):
+                    continue
+                else:
+                    shutil.rmtree(model_folder)
+            settings = f'vae --outfolder {model_folder} \
+                    --input_data {args.input_data} \
+                    --epochs {es}\
+                    --batch_size {bs}\
+                    --latent_size {las}\
+                    --layer_sizes {lys}\
+                    --model_type {args.model_type}\
+                    --learning_rate {lr}\
+                    --specific_libs {libs}'
+            print(settings.split())
+            sys.argv = settings.split()
+            full_main()

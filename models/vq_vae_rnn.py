@@ -65,7 +65,7 @@ class VaeEncoder(nn.Module):
     def __init__(self, layer_sizes, **kwargs):
         super(VaeEncoder, self).__init__()
         self.hidden_size = layer_sizes[-2]
-        self.num_layers = 1
+        self.num_layers = 2
         self.rnn = nn.LSTM(
             input_size = layer_sizes[0], 
             hidden_size = self.hidden_size,

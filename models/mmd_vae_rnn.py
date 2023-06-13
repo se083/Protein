@@ -17,7 +17,7 @@ class VaeEncoder(nn.Module):
         #self.flatten = Flatten()
         #self.fc_blocks = nn.Sequential(*[fc_block(in_size, out_size, **kwargs) for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:-1])])
         self.hidden_size = layer_sizes[-2]
-        self.num_layers = 1
+        self.num_layers = 2
         self.rnn = nn.LSTM(
             input_size = layer_sizes[0], 
             hidden_size = self.hidden_size,
