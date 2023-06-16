@@ -83,7 +83,8 @@ def main(
     for i, leave_out_y in enumerate(uts):
         print('#### Evaluating on target site Nr.',i+1,'/',len(uts),':', leave_out_y, ' ####')
         train_index, test_index = utp.leave_out_indices(combdf.target_sequence_subset, leave_out_y, yx_ind[:,:ts_len], hamming_cutoff=hamming_cutoff)
-        train_index = train_index[~train_index.isin(val_index)]
+        # train_index = train_index[~train_index.isin(val_index)]
+        train_index = list(set(train_index).difference(set(val_index)))
         out_dict = analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out)
 
     for key, value in out_dict.items():
