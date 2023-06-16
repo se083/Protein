@@ -34,7 +34,12 @@ class VAE(nn.Module):
         super(VAE, self).__init__()
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
-        self.dec_layer_sizes = [[ts_len, input_shape[1] + latent_size], *layer_sizes[::-1], input_shape]
+        self.dec_layer_sizes = [[1, latent_size], *layer_sizes[::-1], input_shape]
+        self.shorten = 0
+        if ts_len == 0:
+            ts_len = 13
+            self.shorten = ts_len
+            input_shape = [input_shape[0]+ts_len, input_shape[1]]
         self.decoder = VaeCNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
@@ -45,14 +50,20 @@ class VAE(nn.Module):
     def forward(self, x):
         self.mu, self.logvar = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        return self.decoder(z)
+        z = z.unsqueeze(dim = -2)
+        o = self.decoder(z)
+        o = o[:,self.shorten:]
+        return o
 
     def loss_function(self, recon_x, x, **kwargs):
         recon_loss = F.cross_entropy(recon_x.transpose(1,2), x.transpose(1,2), reduction='none')
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
         #recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
-        recon_loss = torch.sum((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])
-
+        if 'ts_len' in kwargs and kwargs['ts_len']>0:
+            recon_loss = torch.sum((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])
+        else: 
+            recon_loss = torch.sum(recon_loss)
+    
         # https://arxiv.org/abs/1312.6114
         # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
         #kld_loss = torch.mean(-0.5 * torch.sum(1 + self.logvar - self.mu.pow(2) - self.logvar.exp(), dim = 1), dim = 0)

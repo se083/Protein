@@ -38,7 +38,11 @@ class VaeEncoder(nn.Module):
 class CVAE(nn.Module):
     def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
         super(CVAE, self).__init__()
+        self.padding = 0
         self.input_shape = (input_shape[0]-ts_len, input_shape[1])
+        if ts_len == 0:
+            ts_len = 13
+            self.padding = ts_len
         #self.layer_sizes = [prod(input_shape), *layer_sizes, latent_size]
         #new code
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
@@ -52,6 +56,11 @@ class CVAE(nn.Module):
         return mu + eps*std
 
     def forward(self, x):
+        if self.padding > 0:
+            x = torch.nn.functional.pad(
+                x,
+                (self.padding, 0, 0, 0)
+            )
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
         z = z.unsqueeze(dim = -2)
@@ -65,8 +74,12 @@ class CVAE(nn.Module):
         recon_loss = F.cross_entropy(recon_x.transpose(1,2), x.transpose(1,2), reduction='none')
         # recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
-        #recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
-        recon_loss = torch.sum((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])
+        # recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
+        # if 'ts_len' in kwargs and kwargs['ts_len']>0:
+        #     recon_loss = torch.sum((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])
+        # else: 
+        recon_loss = torch.sum(recon_loss)
+
 
         # https://arxiv.org/abs/1312.6114
         # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
