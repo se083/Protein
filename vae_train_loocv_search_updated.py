@@ -10,7 +10,7 @@ import pandas as pd
 from collections import defaultdict
 import subprocess
 import argparse
-from vae_train_loocv import full_main
+from vae_train_val import full_main
 
 import sys
 import os

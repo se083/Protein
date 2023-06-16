@@ -10,7 +10,7 @@ import pandas as pd
 from collections import defaultdict
 import subprocess
 import argparse
-from vae_train_loocv import full_main
+from vae_train_val import full_main
 from vae_train_ssl import pre_train
 
 # def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):

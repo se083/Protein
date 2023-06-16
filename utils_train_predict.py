@@ -78,6 +78,15 @@ def leave_out_indices(df_series_forfilter, leave_out_y, y_ind, hamming_cutoff = 
 
     return train_index, test_index
 
+def validation_indices(df_series_forfilter, validation_ys):
+    testb = df_series_forfilter.isin(validation_ys)
+    test_index = list(testb[testb].index)
+
+    trainb = ~testb
+    train_index = list(trainb[trainb].index)
+
+    return train_index, test_index
+
 
 def z_unif_sampling(z_values, n_samples):
     z_boundaries = [(min(z_values[:,i]), max(z_values[:,i])) for i in range(z_values.shape[1])]
