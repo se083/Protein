@@ -31,7 +31,7 @@ def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_in
     print('z search prediction')
     out_samples = n_out
     if 'MLP' not in model_type:
-        z_train = training.model_predict(model.encoder, yx_oh[train_index], 10000)
+        z_train = training.model_predict(model.encoder, yx_oh[train_index], 100)
     print("completed predictions")
     if 'MLP' in model_type:
         z_found = np.repeat(np.reshape(a=yx_oh[test_index[0],:ts_len], newshape=(1,ts_len*yx_oh.shape[2])), repeats=out_samples, axis=0)
