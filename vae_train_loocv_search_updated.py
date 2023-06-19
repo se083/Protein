@@ -32,7 +32,7 @@ if __name__ == '__main__':
             lys = args.layer_sizes
             lys = ' '.join(str(x) for x in lys)
             libs = ' '.join(args.specific_libs)
-            es = 20
+            es = 40
             las = 2
             model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-1')
             if os.path.exists(model_folder):
