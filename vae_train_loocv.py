@@ -18,12 +18,13 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out):
+    model.eval()
     # loss
     loss_df['TargetSequence'] = leave_out_y
     out_dict['loss'].append(loss_df)
 
     print('testing reconstruction of left out data')
-    yx_pred_test_ind = utp.predict_and_index(model, yx_oh[test_index], batch_size=10000)
+    yx_pred_test_ind = utp.predict_and_index(model, yx_oh[test_index], batch_size=128)
     recon_hamming = utp.hamming_distance_df(yx_pred_test_ind, yx_ind[test_index], ts_len, vocab_list)
     recon_hamming['DataType'] = 'Reconstruction<>Truth'
 

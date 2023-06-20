@@ -90,7 +90,7 @@ def main(
     for key, value in out_dict.items():
         out_dict[key] = pd.concat(value)
 
-    return out_dict
+    return out_dict, model
 
 
 def full_main():
@@ -138,7 +138,7 @@ def full_main():
     out_collect = defaultdict(list)
 
     for model_nr in range(args.n_models):
-        out = main(
+        out, model = main(
             data = args.input_data,
             model_type = args.model_type,
             latent_size = args.latent_size,
@@ -163,6 +163,9 @@ def full_main():
         # collect output data frames in lists and add the model_nr
         for key, value in out.items():
             out_collect[key].append( value.assign(Model_Nr=model_nr) )
+        
+        # save model
+        # torch.save(model, folderstr + '/' + args.model_type + '_' + str(model_nr) + '.pt')
 
     # concatenate the lists into dataframe
     for key, value in out_collect.items():
