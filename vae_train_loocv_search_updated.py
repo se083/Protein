@@ -34,7 +34,7 @@ if __name__ == '__main__':
         lys = ' '.join(str(x) for x in lys)
         libs = ' '.join(args.specific_libs)
         bs = args.batch_size
-        es = 70
+        es = 40
         las = 2
         model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-1')
         if os.path.exists(model_folder):
