@@ -16,11 +16,11 @@ def conv_block(in_size, out_size):
     layers = [conv1, act1, max1]
     return nn.Sequential(*layers)
 
-def deconv_block(in_size, out_size, upsample = True):
+def deconv_block(in_size, out_size, upsample = True, kernel_size = 5):
     conv1 = nn.ConvTranspose1d(
         in_channels = in_size, 
         out_channels = out_size, 
-        kernel_size = 5,
+        kernel_size = kernel_size,
         stride = 1,
         padding = 0
     )
@@ -57,12 +57,22 @@ def deconv_decoder(layer_sizes, output_shape):
     diff_len = o_len - in_len
 
     remaining_blocks = diff_len // 4
+    remainder = diff_len % 4
 
     for _ in range(remaining_blocks):
         block = deconv_block(
             input_channels, 
             hidden_channels, 
             upsample=False
+        )
+        blocks.append(block)
+
+    if remainder > 0:
+        block = deconv_block(
+            input_channels, 
+            hidden_channels, 
+            upsample=False, 
+            kernel_size=remainder+1
         )
         blocks.append(block)
 

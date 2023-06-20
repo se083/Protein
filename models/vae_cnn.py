@@ -32,14 +32,17 @@ class VaeEncoder(nn.Module):
 class VAE(nn.Module):
     def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
         super(VAE, self).__init__()
-        self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
-        self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
-        self.dec_layer_sizes = [[1, latent_size], *layer_sizes[::-1], input_shape]
-        self.shorten = 0
+        self.padding = 0
         if ts_len == 0:
             ts_len = 13
-            self.shorten = ts_len
-            input_shape = [input_shape[0]+ts_len, input_shape[1]]
+            self.padding = ts_len
+            input_shape = (input_shape[0]+ts_len, input_shape[1])
+        #self.layer_sizes = [prod(input_shape), *layer_sizes, latent_size]
+        #new code
+        self.ts_len = ts_len
+        self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
+        self.encoder = VaeEncoder(self.layer_sizes, ts_len, **layer_kwargs)
+        self.dec_layer_sizes = [[ts_len, latent_size], *layer_sizes[::-1], input_shape]
         self.decoder = VaeCNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
@@ -48,11 +51,17 @@ class VAE(nn.Module):
         return mu + eps*std
 
     def forward(self, x):
+        if self.padding > 0:
+            x = torch.nn.functional.pad(
+                x,
+                (self.padding, 0, 0, 0)
+            )
         self.mu, self.logvar = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
         z = z.unsqueeze(dim = -2)
+        z = z.repeat(1, self.ts_len, 1)
         o = self.decoder(z)
-        o = o[:,self.shorten:]
+        o = o[:,self.padding:]
         return o
 
     def loss_function(self, recon_x, x, **kwargs):

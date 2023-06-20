@@ -40,6 +40,7 @@ class CVAE(nn.Module):
         super(CVAE, self).__init__()
         self.padding = 0
         self.input_shape = (input_shape[0]-ts_len, input_shape[1])
+        self.ts_len = ts_len
         if ts_len == 0:
             ts_len = 13
             self.padding = ts_len
@@ -71,6 +72,8 @@ class CVAE(nn.Module):
         return x_y_reconstructed
 
     def loss_function(self, recon_x, x, **kwargs):
+        recon_x = recon_x[:, max(self.padding, self.ts_len):]
+        x = x[:, self.ts_len:]
         recon_loss = F.cross_entropy(recon_x.transpose(1,2), x.transpose(1,2), reduction='none')
         # recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
