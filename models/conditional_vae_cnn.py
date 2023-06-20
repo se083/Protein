@@ -60,7 +60,7 @@ class CVAE(nn.Module):
         if self.padding > 0:
             x = torch.nn.functional.pad(
                 x,
-                (self.padding, 0, 0, 0)
+                (0, 0, self.padding, 0)
             )
         self.mu, self.logvar, y = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
