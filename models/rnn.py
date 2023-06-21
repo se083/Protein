@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class VaeRNNDecoder(nn.Module):
-    def __init__(self, layer_sizes, output_shape, **kwargs):
+    def __init__(self, layer_sizes, num_layers, output_shape, **kwargs):
         super(VaeRNNDecoder, self).__init__()
         #self.fc_blocks = nn.Sequential(*[fc_block(in_size, out_size, **kwargs) for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:-1])])
         #self.fc_last = nn.Linear(layer_sizes[-2],layer_sizes[-1])
@@ -15,7 +15,7 @@ class VaeRNNDecoder(nn.Module):
         # self.hidden_size = latent_size + o_channels
         self.hidden_size = layer_sizes[-2]
         # self.num_layers = len(layer_sizes)-2
-        self.num_layers = 2
+        self.num_layers = num_layers
         self.rnn = nn.LSTM(
             input_size = self.hidden_size, 
             hidden_size = self.hidden_size,

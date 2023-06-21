@@ -69,6 +69,7 @@ class CVAE(nn.Module):
         z = torch.cat((y, z), -1) # combine ts with z
         x_reconstructed = self.decoder(z)
         x_y_reconstructed = torch.cat((y,x_reconstructed),1)
+        # x_y_reconstructed[]
         return x_y_reconstructed
 
     def loss_function(self, recon_x, x, **kwargs):

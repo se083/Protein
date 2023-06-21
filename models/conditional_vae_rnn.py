@@ -9,14 +9,14 @@ from torch.nn import functional as F
 from math import prod
 
 class VaeEncoder(nn.Module):
-    def __init__(self, layer_sizes, ts_len, **kwargs):
+    def __init__(self, layer_sizes, ts_len, num_layers, **kwargs):
         super(VaeEncoder, self).__init__()
         self.ts_len = ts_len
         # new code
         #self.flatten = Flatten()
         self.hidden_size = layer_sizes[-2]
         # self.num_layers = len(layer_sizes)-2
-        self.num_layers = 2
+        self.num_layers = num_layers
         self.rnn = nn.LSTM(
             input_size = layer_sizes[0], 
             hidden_size = self.hidden_size,
@@ -39,15 +39,15 @@ class VaeEncoder(nn.Module):
         return self.fc_mu(x), self.fc_logvar(x), y
 
 class CVAE(nn.Module):
-    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
+    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, num_layers, layer_kwargs={}, *args, **kwargs):
         super(CVAE, self).__init__()
         self.input_shape = (input_shape[0]-ts_len, input_shape[1])
         #self.layer_sizes = [prod(input_shape), *layer_sizes, latent_size]
         #new code
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
-        self.encoder = VaeEncoder(self.layer_sizes, ts_len, **layer_kwargs)
+        self.encoder = VaeEncoder(self.layer_sizes, ts_len, num_layers, **layer_kwargs)
         self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
-        self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = self.input_shape, **layer_kwargs)
+        self.decoder = VaeRNNDecoder(self.dec_layer_sizes, num_layers, output_shape = self.input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
         std = torch.exp(0.5*logvar)

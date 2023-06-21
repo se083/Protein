@@ -8,11 +8,11 @@ from torch.nn import functional as F
 from math import prod
 
 class VaeEncoder(nn.Module):
-    def __init__(self, layer_sizes, **kwargs):
+    def __init__(self, layer_sizes, num_layers, **kwargs):
         super(VaeEncoder, self).__init__()
         self.hidden_size = layer_sizes[-2]
         # self.num_layers = len(layer_sizes)-2
-        self.num_layers = 2
+        self.num_layers = num_layers
         self.rnn = nn.LSTM(
             input_size = layer_sizes[0], 
             hidden_size = self.hidden_size,
@@ -37,10 +37,10 @@ import torch
 import torch.nn as nn
     
 class VAE(nn.Module):
-    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
+    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, num_layers, layer_kwargs={}, *args, **kwargs):
         super(VAE, self).__init__()
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
-        self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
+        self.encoder = VaeEncoder(self.layer_sizes, num_layers, **layer_kwargs)
         self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
 
