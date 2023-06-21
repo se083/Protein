@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('-m','--model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE')
     parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space')
     parser.add_argument('-l','--layer_sizes', nargs='*', default=[64,32], type=int, help='default = %(default)s; the hidden layer dimensions in the model', dest='layer_sizes')
-    parser.add_argument('-b','--batch_size', nargs='?', default=128, type=int, help='default = %(default)s; the number of samples in each processing batch', dest='batch_size')
+    # parser.add_argument('-b','--batch_size', nargs='?', default=128, type=int, help='default = %(default)s; the number of samples in each processing batch', dest='batch_size')
     parser.add_argument('-e','--epochs', nargs='?', default=40, type=int, help='default = %(default)s; the number of iterations the training is going through', dest='epochs')
     parser.add_argument('-nl','--num_layers', nargs='?', default=None, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
 
@@ -31,31 +31,32 @@ if __name__ == '__main__':
     #     for bs in [64, 128, 512]:
     #         for lr in [1e-3, 1e-4, 1e-5]:
     #             for las in [2, 4, 6]:
-    for lr in [1e-4, 1e-5, 1e-3]:
-        lys = args.layer_sizes
-        lys = ' '.join(str(x) for x in lys)
-        libs = ' '.join(args.specific_libs)
-        bs = args.batch_size
-        es = args.epochs
-        las = 2
-        nl = args.num_layers
-        model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
-        if os.path.exists(model_folder):
-            pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-            if os.path.exists(pred_path):
-                continue
-            else:
-                shutil.rmtree(model_folder)
-        settings = f'vae --outfolder {model_folder} \
-                --input_data {args.input_data} \
-                --epochs {es}\
-                --batch_size {bs}\
-                --latent_size {las}\
-                --layer_sizes {lys}\
-                --model_type {args.model_type}\
-                --learning_rate {lr}\
-                --specific_libs {libs}\
-                --num_layers {nl}'
-        print(settings.split())
-        sys.argv = settings.split()
-        full_main()
+    for bs in [32, 64, 128, 512]:
+        for lr in [1e-3, 1e-4, 1e-5]:
+            lys = args.layer_sizes
+            lys = ' '.join(str(x) for x in lys)
+            libs = ' '.join(args.specific_libs)
+            bs = args.batch_size
+            es = args.epochs
+            las = 2
+            nl = args.num_layers
+            model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
+            if os.path.exists(model_folder):
+                pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                if os.path.exists(pred_path):
+                    continue
+                else:
+                    shutil.rmtree(model_folder)
+            settings = f'vae --outfolder {model_folder} \
+                    --input_data {args.input_data} \
+                    --epochs {es}\
+                    --batch_size {bs}\
+                    --latent_size {las}\
+                    --layer_sizes {lys}\
+                    --model_type {args.model_type}\
+                    --learning_rate {lr}\
+                    --specific_libs {libs}\
+                    --num_layers {nl}'
+            print(settings.split())
+            sys.argv = settings.split()
+            full_main()
