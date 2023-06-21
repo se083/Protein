@@ -36,7 +36,7 @@ if __name__ == '__main__':
             lys = args.layer_sizes
             lys = ' '.join(str(x) for x in lys)
             libs = ' '.join(args.specific_libs)
-            bs = args.batch_size
+            # bs = args.batch_size
             es = args.epochs
             las = 2
             nl = args.num_layers
