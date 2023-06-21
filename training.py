@@ -133,7 +133,7 @@ def ztrack_training(model, x_train, x_test, optimizer_kwargs, loss_kwargs):
 
 
 
-def model_predict(model, input_data, batch_size = 0):
+def model_predict(model, input_data, batch_size = 1):
     if batch_size < 1:
         input_data = torch.tensor(input_data.astype('float32')).to(torch.device('cuda'))
         with torch.no_grad():
