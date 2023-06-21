@@ -1,5 +1,5 @@
 import models.cnn as cnn
-from models.cnn import conv_block, deconv_block, deconv_decoder, VaeCNNDecoder
+from models.cnn import conv_block, deconv_block, deconv_decoder
 
 import torch
 import torch.utils.data
@@ -43,7 +43,7 @@ class VAE(nn.Module):
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, **layer_kwargs)
         self.dec_layer_sizes = [[ts_len, latent_size], *layer_sizes[::-1], input_shape]
-        self.decoder = VaeCNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
+        self.decoder = VaeCNNDecoder(self.dec_layer_sizes, self.ts_len, output_shape = input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
         std = torch.exp(0.5*logvar)
@@ -58,8 +58,6 @@ class VAE(nn.Module):
             )
         self.mu, self.logvar = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
-        z = z.unsqueeze(dim = -2)
-        z = z.repeat(1, self.ts_len, 1)
         o = self.decoder(z)
         o = o[:,self.padding:]
         return o
@@ -79,3 +77,25 @@ class VAE(nn.Module):
         kld_loss = -0.5 * torch.sum(1 + self.logvar - self.mu.pow(2) - self.logvar.exp())
         adj_kld = kwargs.get('beta',1) * kld_loss
         return {'loss': recon_loss + adj_kld, 'recon_loss': recon_loss, 'kld_loss': kld_loss, 'adj_kld': adj_kld}
+
+class VaeCNNDecoder(nn.Module):
+    def __init__(self, layer_sizes, ts_len, output_shape, **kwargs):
+        super(VaeCNNDecoder, self).__init__()
+        #self.fc_blocks = nn.Sequential(*[fc_block(in_size, out_size, **kwargs) for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:-1])])
+        #self.fc_last = nn.Linear(layer_sizes[-2],layer_sizes[-1])
+        #self.sigmoid = nn.Sigmoid()
+        #self.unflatten = UnFlatten(output_shape)
+        self.ts_len = ts_len
+        self.block = deconv_decoder(layer_sizes, output_shape)
+
+    def forward(self, x):
+        #x = self.fc_blocks(x)
+        #x = self.fc_last(x)
+        #x = self.sigmoid(x)
+        #return self.unflatten(x)
+        x = x.unsqueeze(dim = -2)
+        x = x.repeat(1, self.ts_len, 1)
+        x = x.transpose(1, 2)
+        x_y = self.block(x)
+        x_y = x_y.transpose(1,2)
+        return x_y
