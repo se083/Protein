@@ -60,7 +60,7 @@ def read_submat(mat_name,vocab_list):
     return tab.loc[vocab_list,vocab_list].values
 
 
-def check_mkdir(folderstr, max_iter = 10):
+def check_mkdir(folderstr, max_iter = 1000):
     if os.path.exists(folderstr):
         for i in range(max_iter):
             new_folderstr = folderstr + '_' + str(i)
