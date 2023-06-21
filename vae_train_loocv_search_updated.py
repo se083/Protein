@@ -32,7 +32,7 @@ if __name__ == '__main__':
     #         for lr in [1e-3, 1e-4, 1e-5]:
     #             for las in [2, 4, 6]:
     for bs in [32, 64, 128, 512]:
-        for lr in [1e-3, 1e-4, 1e-5]:
+        for lr in [1e-4, 1e-5, 1e-3]:
             lys = args.layer_sizes
             lys = ' '.join(str(x) for x in lys)
             libs = ' '.join(args.specific_libs)
