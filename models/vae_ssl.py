@@ -36,7 +36,7 @@ class VaeDecoder(nn.Module):
 
 
 class VAE(nn.Module):
-    def __init__(self, input_shape, layer_sizes, latent_size, layer_kwargs={}, *args, **kwargs):
+    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, layer_kwargs={}, *args, **kwargs):
         super(VAE, self).__init__()
         self.padding = 0
         if ts_len == 0:
