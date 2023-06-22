@@ -108,7 +108,7 @@ def prediction_ts_distance(x, decoder, ts_len, compare_to_oh): # x is z [?n,late
     else:
         sum_axis = (1,2)
 
-    pred = model_predict(decoder,x)[:,:ts_len] # pred is [n,13,21]
+    pred = model_predict(decoder,x, 128)[:,:ts_len] # pred is [n,13,21]
     dist = np.sum(np.absolute(np.subtract(pred,compare_to_oh)), axis = sum_axis) # compare_to_oh should be [1,13,21]
     return dist
 
