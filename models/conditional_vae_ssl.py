@@ -47,6 +47,7 @@ class CVAE(nn.Module):
         if ts_len == 0:
             ts_len = 13
             self.padding = ts_len
+            input_shape = (input_shape[0]+ts_len, input_shape[1])
         self.layer_sizes = [prod(input_shape), *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, ts_len, **layer_kwargs)
         self.dec_layer_sizes = [latent_size+ts_len*input_shape[1], *layer_sizes[::-1], prod(self.input_shape)]
