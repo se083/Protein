@@ -21,7 +21,9 @@ import models.mlp_rnn
 
 vae_models = {
     'VAE':vae.VAE,
+    'VAE_SSL':vae_ssl.VAE,
     'CVAE':conditional_vae.CVAE,
+    'CVAE_SSL':conditional_vae_ssl.CVAE,
     'MMD_VAE':mmd_vae.MMD_VAE,
     'MMD_CVAE':conditional_mmd_vae.MMD_CVAE,
     'VQ_VAE':vq_vae.VQVAE,
