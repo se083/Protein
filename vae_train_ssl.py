@@ -66,7 +66,7 @@ def pre_train():
     latent_size=args.latent_size,
     ts_len=0,
     layer_kwargs={'batchnorm':args.batch_norm, 'dropout_p':args.dropout_p})
-
+    print(model)
     model, losses = training.model_training(model, yx_oh, yx_oh, epochs=args.epochs, batch_size=args.batch_size, loss_kwargs={'beta':args.beta}, optimizer_kwargs={'lr':args.learning_rate})
 
     # save model
