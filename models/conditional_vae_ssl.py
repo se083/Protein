@@ -44,6 +44,7 @@ class CVAE(nn.Module):
         super(CVAE, self).__init__()
         self.input_shape = (input_shape[0]-ts_len, input_shape[1])
         self.ts_len = ts_len
+        self.padding = 0
         if ts_len == 0:
             ts_len = 13
             self.padding = ts_len
