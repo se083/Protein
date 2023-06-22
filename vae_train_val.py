@@ -35,7 +35,7 @@ def main(
     specific_libs = 'all',
     n_out = 1000,
     pre_model = None,
-    num_layers = None):
+    num_layers = 1):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -120,7 +120,7 @@ def full_main():
     parser.add_argument('--n_out', nargs='?', default=1000, type=int, help='default = %(default)s; number of predictions to make for each model and library', dest='n_out')
     parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
     parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
-    parser.add_argument('-nl','--num_layers', nargs='?', default=None, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
+    parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
 
     args = parser.parse_args()
     np.random.seed(args.seed)

@@ -51,11 +51,11 @@ class VAE(nn.Module):
         return mu + eps*std
 
     def forward(self, x):
-        if self.padding > 0:
-            x = torch.nn.functional.pad(
-                x,
-                (0, 0, self.padding, 0)
-            )
+        # if self.padding > 0:
+        #     x = torch.nn.functional.pad(
+        #         x,
+        #         (0, 0, self.padding, 0)
+        #     )
         self.mu, self.logvar = self.encoder(x)
         z = self.reparameterize(self.mu, self.logvar)
         o = self.decoder(z)
