@@ -18,6 +18,8 @@ import models.vq_vae_rnn
 import models.conditional_vae_rnn
 import models.conditional_mmd_vae_rnn
 import models.mlp_rnn
+import models.vae_ssl
+import models.conditional_vae_ssl
 
 vae_models = {
     'VAE':vae.VAE,
@@ -26,7 +28,7 @@ vae_models = {
     'CVAE_SSL':conditional_vae_ssl.CVAE,
     'MMD_VAE':mmd_vae.MMD_VAE,
     'MMD_CVAE':conditional_mmd_vae.MMD_CVAE,
-    'VQ_VAE':vq_vae.VQVAE,
+    'VQ_VAE':vq_vas.VQVAE,
     'MLP':mlp.MLP,
     'CNN_VAE':vae_cnn.VAE,
     'CNN_CVAE':conditional_vae_cnn.CVAE,
