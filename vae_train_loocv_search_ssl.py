@@ -245,29 +245,30 @@ if __name__ == '__main__':
     args = parser.parse_args()
     #for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:    
     for lys in [[512, 512], [1024, 1024], [256, 256]]:
+        lys = ' '.join(str(x) for x in lys)
+        libs = ' '.join(args.specific_libs)
+        bs = 128
+        es = 20
+        las = 2
+        model_folder = os.path.join(args.outfolder, f'ssl_{es}-{bs}-{lr}-{libs.replace(" ", "_")}')
+        if os.path.exists(model_folder):
+            pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+            if os.path.exists(pred_path):
+                continue
+            else:
+                shutil.rmtree(model_folder)
+        settings = f'vae --outfolder {model_folder} \
+                --input_data {args.input_data} \
+                --epochs {es}\
+                --batch_size {bs}\
+                --model_type {args.pre_train_model_type}\
+                --learning_rate {lr}'
+        print(settings.split())
+        sys.argv = settings.split()
+        pre_train()
+        pre_model = model_folder + '/' + args.pre_train_model_type + '_weights' + '_' + str(0) + '.pt'
         for lr in [1e-3, 1e-4, 1e-5]:
-            lys = ' '.join(str(x) for x in lys)
-            libs = ' '.join(args.specific_libs)
-            bs = 128
-            es = 20
-            las = 2
-            model_folder = os.path.join(args.outfolder, f'ssl_{es}-{bs}-{lr}-{libs.replace(" ", "_")}')
-            if os.path.exists(model_folder):
-                pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-                if os.path.exists(pred_path):
-                    continue
-                else:
-                    shutil.rmtree(model_folder)
-            settings = f'vae --outfolder {model_folder} \
-                    --input_data {args.input_data} \
-                    --epochs {es}\
-                    --batch_size {bs}\
-                    --model_type {args.pre_train_model_type}\
-                    --learning_rate {lr}'
-            print(settings.split())
-            sys.argv = settings.split()
-            pre_train()
-            pre_model = model_folder + '/' + args.pre_train_model_type + '_weights' + '_' + str(0) + '.pt'
+            model_folder = os.path.join(model_folder, f'ssl_sup_{es}-{bs}-{lr}-{libs.replace(" ", "_")}')
             settings = f'vae --outfolder {model_folder} \
                     --input_data /content/drive/MyDrive/Data/Protein/published_YSSR_sequence_data_translated_copy.csv \
                     --epochs {es}\

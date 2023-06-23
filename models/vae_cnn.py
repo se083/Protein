@@ -73,8 +73,8 @@ class VAE(nn.Module):
     
         # https://arxiv.org/abs/1312.6114
         # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
-        #kld_loss = torch.mean(-0.5 * torch.sum(1 + self.logvar - self.mu.pow(2) - self.logvar.exp(), dim = 1), dim = 0)
-        kld_loss = -0.5 * torch.mean(1 + self.logvar - self.mu.pow(2) - self.logvar.exp())
+        kld_loss = torch.mean(-0.5 * torch.sum(1 + self.logvar - self.mu.pow(2) - self.logvar.exp(), dim = 1), dim = 0)
+        # kld_loss = -0.5 * torch.mean(1 + self.logvar - self.mu.pow(2) - self.logvar.exp())
         adj_kld = kwargs.get('beta',1) * kld_loss
         return {'loss': recon_loss + adj_kld, 'recon_loss': recon_loss, 'kld_loss': kld_loss, 'adj_kld': adj_kld}
 
