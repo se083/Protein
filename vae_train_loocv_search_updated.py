@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('-l','--layer_sizes', nargs='*', default=[64,32], type=int, help='default = %(default)s; the hidden layer dimensions in the model', dest='layer_sizes')
     # parser.add_argument('-b','--batch_size', nargs='?', default=128, type=int, help='default = %(default)s; the number of samples in each processing batch', dest='batch_size')
     parser.add_argument('-e','--epochs', nargs='?', default=40, type=int, help='default = %(default)s; the number of iterations the training is going through', dest='epochs')
-    parser.add_argument('-nl','--num_layers', nargs='?', default=None, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
+    parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
 
     args = parser.parse_args()
     # for es in [10, 40]:
