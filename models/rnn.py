@@ -52,6 +52,6 @@ class VaeRNNDecoder(nn.Module):
             output.append(o)
             x = x.unsqueeze(dim=1)
         output = torch.cat(output, dim=1)
-        if self.t_len > 0: # if we're fine-tuning, we don't want to predict - or _
-            output[:, :, -2:] += -1e6
+        # if self.t_len > 0: # if we're fine-tuning, we don't want to predict - or _
+        #     output[:, :, -2:] += -1e6
         return output
