@@ -32,6 +32,7 @@ def pre_train():
     parser.add_argument('-D','--num_embeddings', nargs='?', default=10, type=int, help='default = %(default)s; VQ_VAE only, number of "categories" to embed', dest='num_embeddings')
     parser.add_argument('-K','--embedding_dim', nargs='?', default=1, type=int, help='default = %(default)s; VQ_VAE only, number of values to represent each embedded "category"', dest='embedding_dim')
     parser.add_argument('-n','--n_models', nargs='?', default=1, type=int, help='default = %(default)s; number of models to train', dest='n_models')
+    parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
 
     args = parser.parse_args()
 
@@ -65,7 +66,8 @@ def pre_train():
     layer_sizes=args.layer_sizes,
     latent_size=args.latent_size,
     ts_len=0,
-    layer_kwargs={'dropout_p':args.dropout_p})
+    layer_kwargs={'dropout_p':args.dropout_p},
+    num_layers=arg.num_layers)
     print(model)
     model, losses = training.model_training(model, yx_oh, yx_oh, epochs=args.epochs, batch_size=args.batch_size, loss_kwargs={'beta':args.beta}, optimizer_kwargs={'lr':args.learning_rate})
 
