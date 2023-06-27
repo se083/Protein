@@ -42,7 +42,7 @@ class VAE(nn.Module):
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, num_layers, **layer_kwargs)
         self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], input_shape]
-        self.decoder = VaeRNNDecoder(self.dec_layer_sizes, output_shape = input_shape, **layer_kwargs)
+        self.decoder = VaeRNNDecoder(self.dec_layer_sizes, num_layers, output_shape = input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
         std = torch.exp(0.5*logvar)
