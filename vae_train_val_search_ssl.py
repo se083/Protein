@@ -41,7 +41,8 @@ if __name__ == '__main__':
                 nl = args.num_layers
                 model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
                 if os.path.exists(model_folder):
-                    pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                    fine_tune_folder = os.path.join(model_folder, f'40-128-0.001-{libs.replace(" ", "_")}')
+                    pred_path = os.path.join(fine_tune_folder, 'prediction_hamming.csv')
                     if os.path.exists(pred_path):
                         continue
                     else:
