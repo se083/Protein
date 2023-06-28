@@ -61,10 +61,10 @@ if __name__ == '__main__':
                 model_folder = os.path.join(model_folder, f'40-128-0.001-{libs.replace(" ", "_")}')
                 settings = f'vae --outfolder {model_folder} \
                         --input_data {args.input_data} \
-                        --epochs 40\
-                        --batch_size 128\
+                        --epochs {args.epochs}\
+                        --batch_size {args.batch_size}\
                         --model_type {args.fine_tune_model_type}\
-                        --learning_rate 0.001\
+                        --learning_rate {args.learning_rate}\
                         --specific_libs {args.specific_libs}\
                         --pre_model {pre_model}\
                         -l {lys}\
