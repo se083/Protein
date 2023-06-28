@@ -41,7 +41,7 @@ if __name__ == '__main__':
                 nl = args.num_layers
                 model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
                 if os.path.exists(model_folder):
-                    fine_tune_folder = os.path.join(model_folder, f'40-128-0.001-{libs.replace(" ", "_")}')
+                    fine_tune_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{libs.replace(" ", "_")}')
                     pred_path = os.path.join(fine_tune_folder, 'prediction_hamming.csv')
                     if os.path.exists(pred_path):
                         continue
@@ -59,7 +59,7 @@ if __name__ == '__main__':
                 sys.argv = settings.split()
                 pre_train()
                 pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
-                model_folder = os.path.join(model_folder, f'40-128-0.001-{libs.replace(" ", "_")}')
+                model_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{libs.replace(" ", "_")}')
                 settings = f'vae --outfolder {model_folder} \
                         --input_data {args.input_data} \
                         --epochs {args.epochs}\
