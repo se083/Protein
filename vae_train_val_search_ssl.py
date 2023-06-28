@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 libs = ' '.join(args.specific_libs)
                 las = 2
                 nl = args.num_layers
-                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
+                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{nl}')
                 if os.path.exists(model_folder):
                     fine_tune_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{libs.replace(" ", "_")}')
                     pred_path = os.path.join(fine_tune_folder, 'prediction_hamming.csv')
