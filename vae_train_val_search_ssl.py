@@ -65,7 +65,7 @@ if __name__ == '__main__':
                         --batch_size {args.batch_size}\
                         --model_type {args.fine_tune_model_type}\
                         --learning_rate {args.learning_rate}\
-                        --specific_libs {args.specific_libs}\
+                        --specific_libs {libs}\
                         --pre_model {pre_model}\
                         -l {lys}\
                         -nl {nl}'
