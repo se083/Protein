@@ -268,4 +268,7 @@ if __name__ == '__main__':
                                 --specific_libs {libs}'
                         print(settings.split())
                         sys.argv = settings.split()
-                        full_main()
+                        try:
+                            full_main()
+                        except Exception as e:
+                            print(e)
