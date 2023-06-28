@@ -77,7 +77,7 @@ def main(
     #load the model 
     if pre_model is not None:
         weights = torch.load(pre_model)
-        print(model)
+        # print(model)
         model.load_state_dict(weights)
     model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate})
     
