@@ -108,7 +108,8 @@ def main(
     hamming_cutoff=1,
     specific_libs = 'all',
     n_out = 1000,
-    pre_model = None):
+    pre_model = None,
+    num_layers = 1):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -152,7 +153,7 @@ def main(
         if pre_model is not None:
             weights = torch.load(pre_model)
             model.load_state_dict(weights)
-        model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate})
+        model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, num_layers=num_layers, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate})
 
         out_dict = analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out)
 
@@ -188,6 +189,7 @@ def full_main():
     parser.add_argument('--n_out', nargs='?', default=1000, type=int, help='default = %(default)s; number of predictions to make for each model and library', dest='n_out')
     parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
     parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
+    parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -227,7 +229,8 @@ def full_main():
             hamming_cutoff = args.hamming_cutoff,
             specific_libs = args.specific_libs,
             n_out = args.n_out,
-            pre_model = args.pre_model)
+            pre_model = args.pre_model,
+            num_layers = args.num_layers)
 
         # collect output data frames in lists and add the model_nr
         for key, value in out.items():
