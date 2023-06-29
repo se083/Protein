@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('-l','--layer_sizes', nargs='*', default=[64,32], type=int, help='default = %(default)s; the hidden layer dimensions in the model', dest='layer_sizes')
     parser.add_argument('-lr','--learning_rate', nargs='?', default=0.001, type=float, help='default = %(default)s; the rate of learning, higher means faster learning, but can lead to less accuracy', dest='learning_rate')
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
+    parser.add_argument('-a','--beta', nargs='?', default=1, type=float, help='default = %(default)s; the final weight on the KL-Divergence', dest='beta')
 
     args = parser.parse_args()
     for es in [10, 20, 40]:
@@ -54,7 +55,8 @@ if __name__ == '__main__':
                         --model_type {args.pre_train_model_type}\
                         --learning_rate {lr}\
                         -l {lys}\
-                        -nl {nl}'
+                        -nl {nl}\
+                        --beta {args.beta}'
                 print(settings.split())
                 sys.argv = settings.split()
                 pre_train()
@@ -69,7 +71,8 @@ if __name__ == '__main__':
                         --specific_libs {libs}\
                         --pre_model {pre_model}\
                         -l {lys}\
-                        -nl {nl}'
+                        -nl {nl}\
+                        --beta {args.beta}'
                 print(settings.split())
                 sys.argv = settings.split()
                 full_main()
