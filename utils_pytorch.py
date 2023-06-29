@@ -15,7 +15,7 @@ class UnFlatten(nn.Module):
         return input.view(input.size(0),*self.sizes)
 
 
-def fc_block(in_size, out_size, activation='relu', dropout_p=0, batchnorm=True):
+def fc_block(in_size, out_size, activation='relu', dropout_p=0, batchnorm=False):
     activations = nn.ModuleDict([
                 ['lrelu', nn.LeakyReLU()],
                 ['relu', nn.ReLU()] ])

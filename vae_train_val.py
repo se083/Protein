@@ -35,7 +35,8 @@ def main(
     specific_libs = 'all',
     n_out = 1000,
     pre_model = None,
-    num_layers = 1):
+    num_layers = 1,
+    batch_norm = True):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -70,7 +71,7 @@ def main(
     # prepare data and train
     train_index, test_index = utp.validation_indices(combdf.target_sequence_subset, uts)
 
-    model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, num_layers = num_layers, layer_kwargs={'dropout_p':dropout_p})
+    model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, num_layers = num_layers, layer_kwargs={'batchnorm':batch_norm, 'dropout_p':dropout_p})
     model.to('cuda')
     # summary(model, input_size = (357,22))
     print(f'{count_parameters(model):,}')
@@ -122,6 +123,7 @@ def full_main():
     parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
     parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
+    parser.add_argument('--batch_norm', default=True, action='store_true', help='use batch normalisation in the hidden layers', dest='batch_norm')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -162,7 +164,8 @@ def full_main():
             specific_libs = args.specific_libs,
             n_out = args.n_out,
             pre_model = args.pre_model,
-            num_layers = args.num_layers)
+            num_layers = args.num_layers,
+            batch_norm = args.batch_norm)
 
         # collect output data frames in lists and add the model_nr
         for key, value in out.items():

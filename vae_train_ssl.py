@@ -27,7 +27,7 @@ def pre_train():
     parser.add_argument('-e','--epochs', nargs='?', default=40, type=int, help='default = %(default)s; the number of iterations the training is going through', dest='epochs')
     parser.add_argument('-a','--beta', nargs='?', default=2, type=float, help='default = %(default)s; the final weight on the KL-Divergence', dest='beta')
     parser.add_argument('-wd','--weight_decay', nargs='?', default=0, type=int, help='default = %(default)s; a regularisation factor, does not go well with VQ VAE', dest='weight_decay')
-    parser.add_argument('--batch_norm', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='batch_norm')
+    parser.add_argument('--batch_norm', default=True, action='store_true', help='use batch normalisation in the hidden layers', dest='batch_norm')
     parser.add_argument('-lr','--learning_rate', nargs='?', default=0.0001, type=float, help='default = %(default)s; the rate of learning, higher means faster learning, but can lead to less accuracy', dest='learning_rate')
     parser.add_argument('-d','--dropout_p', nargs='?', default=0.1, type=float, help='default = %(default)s; dropout_p probability for every layer, 0 means no dropout', dest='dropout_p')
     parser.add_argument('-D','--num_embeddings', nargs='?', default=10, type=int, help='default = %(default)s; VQ_VAE only, number of "categories" to embed', dest='num_embeddings')
@@ -71,7 +71,7 @@ def pre_train():
     layer_sizes=args.layer_sizes,
     latent_size=args.latent_size,
     ts_len=0,
-    layer_kwargs={'dropout_p':args.dropout_p},
+    layer_kwargs={'batchnorm':args.batch_norm, 'dropout_p':args.dropout_p},
     num_layers=args.num_layers)
     # print(model)
     model, losses = training.model_training(model, yx_oh, yx_oh, epochs=args.epochs, batch_size=args.batch_size, loss_kwargs={'beta':args.beta}, optimizer_kwargs={'lr':args.learning_rate})
