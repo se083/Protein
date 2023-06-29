@@ -241,6 +241,8 @@ if __name__ == '__main__':
     parser.add_argument('-i','--input_data', nargs='?', default='example_input/training_data_masked.csv', type=str, help='default = %(default)s; csv input table containing the columns target_sequence and Sequence (recombinase in amino acid).')
     parser.add_argument('-m','--model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE')
     parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space')
+    parser.add_argument('-a','--beta', nargs='?', default=1, type=float, help='default = %(default)s; the final weight on the KL-Divergence', dest='beta')
+
     args = parser.parse_args()
     #for model in ['CVAE', 'CNN_CVAE', 'RNN_CVAE']:
     for es in [10, 40]:
@@ -265,7 +267,8 @@ if __name__ == '__main__':
                                 --layer_sizes {lys}\
                                 --model_type {args.model_type}\
                                 --learning_rate {lr}\
-                                --specific_libs {libs}'
+                                --specific_libs {libs}\
+                                --beta {args.beta}'
                         print(settings.split())
                         sys.argv = settings.split()
                         try:
