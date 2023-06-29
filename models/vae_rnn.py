@@ -59,7 +59,7 @@ class VAE(nn.Module):
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
         #recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
         if 'ts_len' in kwargs and kwargs['ts_len']>0:
-            recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.sum(recon_loss[:,kwargs.get('ts_len',13):])
+            recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
         else: 
             recon_loss = torch.mean(recon_loss)
 
