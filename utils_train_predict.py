@@ -91,6 +91,7 @@ def validation_indices(df_series_forfilter, validation_ys):
 def z_unif_sampling(z_values, n_samples):
     z_boundaries = [(min(z_values[:,i]), max(z_values[:,i])) for i in range(z_values.shape[1])]
     z_random = np.array([np.random.uniform(min_val,max_val, n_samples) for min_val,max_val in z_boundaries]).T
+    print(z_boundaries)
     return z_random
 
 
