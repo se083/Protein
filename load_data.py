@@ -11,6 +11,7 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
 
     # calculating minimum number of sequences per library
     mdf = combdf.groupby('trained_target_site').count()["target_sequence"].min()
+    print(mdf)
     combdf = combdf.groupby('trained_target_site').apply(
         lambda x : x.sample(mdf)
     )
@@ -64,5 +65,4 @@ def load_unlabeled(file):
     df = load_txt(file)
     df['combined_sequence'] = df.Sequence
     return df
-#might change column names
 
