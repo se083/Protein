@@ -97,6 +97,7 @@ def z_unif_sampling(z_values, n_samples):
 
 def z_norm_sampling(z_values, n_samples, mean, spread_deviation = 0.05):
     z_boundaries = [(min(z_values[:,i]), max(z_values[:,i])) for i in range(z_values.shape[1])]
+    print(z_boundaries)
     z_spread = np.mean(np.absolute(np.array(z_boundaries)), axis=1)
     z_random = np.array([np.random.normal(mean_val, sd_val*spread_deviation, n_samples) for mean_val, sd_val in zip(mean,z_spread)]).T
     return z_random
