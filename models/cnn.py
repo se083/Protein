@@ -92,14 +92,14 @@ class VaeCNNDecoder(nn.Module):
         super(VaeCNNDecoder, self).__init__()
         #self.fc_blocks = nn.Sequential(*[fc_block(in_size, out_size, **kwargs) for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:-1])])
         #self.fc_last = nn.Linear(layer_sizes[-2],layer_sizes[-1])
-        #self.sigmoid = nn.Sigmoid()
+        self.sigmoid = nn.Sigmoid()
         #self.unflatten = UnFlatten(output_shape)
         self.block = deconv_decoder(layer_sizes, output_shape)
 
     def forward(self, x):
         #x = self.fc_blocks(x)
         #x = self.fc_last(x)
-        #x = self.sigmoid(x)
+        x = self.sigmoid(x)
         #return self.unflatten(x)
         x = x.transpose(1, 2)
         x_y = self.block(x)
