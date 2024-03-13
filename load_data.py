@@ -9,6 +9,14 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     # get input
     combdf = pd.read_csv(file)
 
+    max_dups = 5
+    combdf['dups'] = 1
+    cdf = combdf.groupby(['trained_target_site', 'Sequence', 'target_sequence']).count().reset_index()
+    cdf.to_csv('/content/drive/MyDrive/Data/Protein/combdf_count.csv')
+    cdf['dups'] = cdf['dups'].apply(lambda x: min(x,max_dups))
+    combdf = cdf.loc[cdf.index.repeat(cdf['dups'])]
+
+
     # calculating minimum number of sequences per library
     mdf = combdf.groupby('trained_target_site').count()["target_sequence"].min()
     print(mdf)

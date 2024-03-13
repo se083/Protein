@@ -75,8 +75,8 @@ class CVAE(nn.Module):
     def loss_function(self, recon_x, x, **kwargs):
         # recon_x = recon_x[:, max(self.padding, self.ts_len):]
         # x = x[:, self.ts_len:]
-        # recon_loss = F.cross_entropy(recon_x.transpose(1,2), x.transpose(1,2), reduction='none')
-        recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
+        recon_loss = F.cross_entropy(recon_x.transpose(1,2), x.transpose(1,2), reduction='none')
+        # recon_loss = F.binary_cross_entropy(recon_x, x, reduction='none')
         # change contribution weight of ts to loss - for some weird reason the model does not train with mean readuction
         # recon_loss = torch.mean((recon_loss[:,:kwargs.get('ts_len',13)] * kwargs.get('ts_weight',1))) + torch.mean(recon_loss[:,kwargs.get('ts_len',13):])
         # if 'ts_len' in kwargs and kwargs['ts_len']>0:
