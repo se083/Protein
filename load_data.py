@@ -5,11 +5,10 @@ import os
 import re
 
 
-def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13))):
+def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13)), max_dups=1, max_prop=1):
     # get input
     combdf = pd.read_csv(file)
 
-    max_dups = 1
     combdf['dups'] = 1
     cdf = combdf.groupby(['trained_target_site', 'Sequence', 'target_sequence']).count().reset_index()
     cdf.to_csv('/content/drive/MyDrive/Data/Protein/combdf_count.csv')
@@ -23,7 +22,6 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     # combdf = combdf.groupby('trained_target_site').apply(
     #     lambda x : x.sample(mdf)
     # )
-    max_prop = 5
     max_mdf = mdf*max_prop
     combdf = combdf.groupby('trained_target_site').apply(
         lambda x : x.sample(max_mdf) if len(x) >= max_mdf else x.sample(len(x))
@@ -36,6 +34,9 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     combdf['target_sequence_subset'] = [''.join(np.array(list(x))[ts_subset_index]) for x in combdf.target_sequence]
     combdf['combined_sequence'] = combdf.target_sequence_subset + combdf.Sequence
     combdf.reset_index(drop = True, inplace=True) # reset necessary to get integer indices later
+
+    print(f'{len(combdf):,}')
+
     return combdf
 
 

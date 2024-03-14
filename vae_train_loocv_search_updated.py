@@ -22,46 +22,52 @@ if __name__ == '__main__':
     parser.add_argument('-m','--model_type', nargs='?', default='CVAE', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE')
     parser.add_argument('--specific_libs', nargs='*', default='all', type=str, help='default = %(default)s; leave one out testing only for specific libraries, seperate names space')
     parser.add_argument('-l','--layer_sizes', nargs='*', default=[64,32], type=int, help='default = %(default)s; the hidden layer dimensions in the model', dest='layer_sizes')
-    # parser.add_argument('-b','--batch_size', nargs='?', default=128, type=int, help='default = %(default)s; the number of samples in each processing batch', dest='batch_size')
+    parser.add_argument('-b','--batch_size', nargs='?', default=128, type=int, help='default = %(default)s; the number of samples in each processing batch', dest='batch_size')
     parser.add_argument('-e','--epochs', nargs='?', default=40, type=int, help='default = %(default)s; the number of iterations the training is going through', dest='epochs')
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
     parser.add_argument('-a','--beta', nargs='?', default=1, type=float, help='default = %(default)s; the final weight on the KL-Divergence', dest='beta')
+    parser.add_argument('-lr','--learning_rate', nargs='?', default=0.001, type=float, help='default = %(default)s; the rate of learning, higher means faster learning, but can lead to less accuracy', dest='learning_rate')
+    # parser.add_argument('-dup','--maximum_duplicates', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='ts_weight')
+    # parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='ts_weight')
 
     args = parser.parse_args()
     # for es in [10, 40]:
     #     for bs in [64, 128, 512]:
     #         for lr in [1e-3, 1e-4, 1e-5]:
     #             for las in [2, 4, 6]:
-    for bs in [32, 64, 128, 256]:
-        for lr in [1e-4, 1e-5, 1e-3]:
-            lys = args.layer_sizes
-            lys = ' '.join(str(x) for x in lys)
-            libs = ' '.join(args.specific_libs)
-            # bs = args.batch_size
-            es = args.epochs
-            las = 2
-            nl = args.num_layers
-            model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
-            if os.path.exists(model_folder):
-                pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-                if os.path.exists(pred_path):
-                    continue
-                else:
-                    shutil.rmtree(model_folder)
-            settings = f'vae --outfolder {model_folder} \
-                    --input_data {args.input_data} \
-                    --epochs {es}\
-                    --batch_size {bs}\
-                    --latent_size {las}\
-                    --layer_sizes {lys}\
-                    --model_type {args.model_type}\
-                    --learning_rate {lr}\
-                    --specific_libs {libs}\
-                    --num_layers {nl}\
-                    --beta {args.beta}'
-            print(settings.split())
-            sys.argv = settings.split()
-            try:
-                full_main()
-            except Exception as e:
-                print(e)
+    for prop in [1, 2, 3]:
+        for las in [2, 4, 6]:
+            for beta in [1, 0.5, 0.1, 0.05]:
+                for lys in [[512,512], [256,256]]:
+                    libs = ' '.join(args.specific_libs)
+                    # bs = args.batch_size
+                    es = args.epochs
+                    nl = args.num_layers
+                    lr = args.learning_rate
+                    dup = 1
+                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
+                    if os.path.exists(model_folder):
+                        pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                        if os.path.exists(pred_path):
+                            continue
+                        else:
+                            shutil.rmtree(model_folder)
+                    settings = f'vae --outfolder {model_folder} \
+                            --input_data {args.input_data} \
+                            --epochs {es}\
+                            --batch_size {args.batch_size}\
+                            --latent_size {las}\
+                            --layer_sizes {lys}\
+                            --model_type {args.model_type}\
+                            --learning_rate {lr}\
+                            --specific_libs {libs}\
+                            --num_layers {nl}\
+                            --beta {beta}\
+                            --duplicates {dup}\
+                            --maximum_proportion {prop}'
+                    print(settings.split())
+                    sys.argv = settings.split()
+                    try:
+                        full_main()
+                    except Exception as e:
+                        print(e)
