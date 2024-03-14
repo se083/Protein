@@ -39,14 +39,14 @@ if __name__ == '__main__':
         for las in [2, 4, 6]:
             for beta in [1, 0.5, 0.1, 0.05]:
                 for lys in [[512,512], [256,256]]:
+                    lys = ' '.join(str(x) for x in lys)
                     libs = ' '.join(args.specific_libs)
-                    # bs = args.batch_size
                     es = args.epochs
                     bs = args.batch_size
                     lr = args.learning_rate
                     nl = args.num_layers
                     dup = 1
-                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys}-{libs.replace(" ", "_")}-{nl}')
+                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
                     if os.path.exists(model_folder):
                         pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
                         if os.path.exists(pred_path):
