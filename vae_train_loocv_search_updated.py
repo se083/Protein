@@ -45,7 +45,7 @@ if __name__ == '__main__':
                     bs = args.batch_size
                     lr = args.learning_rate
                     dup = 1
-                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
+                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys}-{libs.replace(" ", "_")}-{nl}')
                     if os.path.exists(model_folder):
                         pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
                         if os.path.exists(pred_path):
