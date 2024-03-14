@@ -37,8 +37,8 @@ def main(
     pre_model = None,
     num_layers = 1,
     batch_norm = True,
-    dup = 1,
-    prop = 1):
+    maximum_duplicates = 1,
+    maximum_proportion = 1):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -47,7 +47,7 @@ def main(
     summary_function = np.min
 
     # load the data
-    combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index, dup=1, prop=1)
+    combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_dups=maximum_duplicates, max_prop=maximum_proportion)
 
     # make indices and encode to one-hot
     yx_ind = np.array(utils.seqaln_to_indices(combdf.combined_sequence,vocab_list))
@@ -170,8 +170,8 @@ def full_main():
             pre_model = args.pre_model,
             num_layers = args.num_layers,
             batch_norm = args.batch_norm, 
-            dup = args.maximum_duplicates,
-            prop = args.maximum_proportion
+            maximum_duplicates = args.maximum_duplicates,
+            maximum_proportion = args.maximum_proportion
             )
 
         # collect output data frames in lists and add the model_nr
