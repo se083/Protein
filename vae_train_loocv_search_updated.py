@@ -64,7 +64,7 @@ if __name__ == '__main__':
                             --specific_libs {libs}\
                             --num_layers {nl}\
                             --beta {beta}\
-                            --duplicates {dup}\
+                            --maximum_duplicates {dup}\
                             --maximum_proportion {prop}'
                     print(settings.split())
                     sys.argv = settings.split()
