@@ -38,37 +38,36 @@ if __name__ == '__main__':
     for prop in [1, 2, 3]:
         for las in [2, 4, 6]:
             for beta in [1, 0.5, 0.1, 0.05]:
-                for lys in [[512,512], [256,256]]:
-                    lys = ' '.join(str(x) for x in lys)
-                    libs = ' '.join(args.specific_libs)
-                    es = args.epochs
-                    bs = args.batch_size
-                    lr = args.learning_rate
-                    nl = args.num_layers
-                    dup = 1
-                    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}-{beta}-{dup}-{prop}')
-                    if os.path.exists(model_folder):
-                        pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-                        if os.path.exists(pred_path):
-                            continue
-                        else:
-                            shutil.rmtree(model_folder)
-                    settings = f'vae --outfolder {model_folder} \
-                            --input_data {args.input_data} \
-                            --epochs {es}\
-                            --batch_size {bs}\
-                            --latent_size {las}\
-                            --layer_sizes {lys}\
-                            --model_type {args.model_type}\
-                            --learning_rate {lr}\
-                            --specific_libs {libs}\
-                            --num_layers {nl}\
-                            --beta {beta}\
-                            --maximum_duplicates {dup}\
-                            --maximum_proportion {prop}'
-                    print(settings.split())
-                    sys.argv = settings.split()
-                    try:
-                        full_main()
-                    except Exception as e:
-                        print(e)
+                lys = args.layer_sizes
+                libs = ' '.join(args.specific_libs)
+                es = args.epochs
+                bs = args.batch_size
+                lr = args.learning_rate
+                nl = args.num_layers
+                dup = 1
+                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys}-{libs.replace(" ", "_")}-{nl}-{beta}-{dup}-{prop}')
+                if os.path.exists(model_folder):
+                    pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                    if os.path.exists(pred_path):
+                        continue
+                    else:
+                        shutil.rmtree(model_folder)
+                settings = f'vae --outfolder {model_folder} \
+                        --input_data {args.input_data} \
+                        --epochs {es}\
+                        --batch_size {bs}\
+                        --latent_size {las}\
+                        --layer_sizes {lys}\
+                        --model_type {args.model_type}\
+                        --learning_rate {lr}\
+                        --specific_libs {libs}\
+                        --num_layers {nl}\
+                        --beta {beta}\
+                        --maximum_duplicates {dup}\
+                        --maximum_proportion {prop}'
+                print(settings.split())
+                sys.argv = settings.split()
+                try:
+                    full_main()
+                except Exception as e:
+                    print(e)
