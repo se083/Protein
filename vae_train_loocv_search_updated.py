@@ -44,6 +44,7 @@ if __name__ == '__main__':
                     es = args.epochs
                     bs = args.batch_size
                     lr = args.learning_rate
+                    nl = args.num_layers
                     dup = 1
                     model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys}-{libs.replace(" ", "_")}-{nl}')
                     if os.path.exists(model_folder):
@@ -61,7 +62,7 @@ if __name__ == '__main__':
                             --model_type {args.model_type}\
                             --learning_rate {lr}\
                             --specific_libs {libs}\
-                            --num_layers {args.num_layers}\
+                            --num_layers {nl}\
                             --beta {beta}\
                             --duplicates {dup}\
                             --maximum_proportion {prop}'
