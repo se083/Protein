@@ -41,9 +41,6 @@ if __name__ == '__main__':
                 for lys in [[512,512], [256,256]]:
                     libs = ' '.join(args.specific_libs)
                     # bs = args.batch_size
-                    es = args.epochs
-                    nl = args.num_layers
-                    lr = args.learning_rate
                     dup = 1
                     model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}')
                     if os.path.exists(model_folder):
@@ -54,14 +51,14 @@ if __name__ == '__main__':
                             shutil.rmtree(model_folder)
                     settings = f'vae --outfolder {model_folder} \
                             --input_data {args.input_data} \
-                            --epochs {es}\
+                            --epochs {args.epochs}\
                             --batch_size {args.batch_size}\
                             --latent_size {las}\
                             --layer_sizes {lys}\
                             --model_type {args.model_type}\
-                            --learning_rate {lr}\
+                            --learning_rate {args.learning_rate}\
                             --specific_libs {libs}\
-                            --num_layers {nl}\
+                            --num_layers {args.num_layers}\
                             --beta {beta}\
                             --duplicates {dup}\
                             --maximum_proportion {prop}'
