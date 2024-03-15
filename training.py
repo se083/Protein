@@ -6,6 +6,7 @@ from torch.nn import functional as F
 import numpy as np
 import pandas as pd
 from collections import defaultdict
+import wandb
 
 
 def train(model,train_loader,optimizer, **loss_kwargs):
@@ -28,6 +29,7 @@ def train(model,train_loader,optimizer, **loss_kwargs):
         value = value/nr_batches
         losses_dict[key] = value
         print(key + ':{:.4f}  '.format(value),  end='')
+    wandb.log({key:value/nr_batches for (key, value) in losses_dict.items()})
     print('')
     return dict(losses_dict)
 
@@ -51,6 +53,7 @@ def test(model,test_loader, **loss_kwargs):
         value = value/nr_batches
         losses_dict[key] = value
         print(key + ':{:.4f}  '.format(value),  end='')
+    wandb.log({key:value/nr_batches for (key, value) in losses_dict.items()})
     print('')
     return dict(losses_dict)
 
@@ -68,6 +71,19 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
     final_beta = loss_kwargs.get('beta',1) # for vanilla vae mmd
     beta_ramping = loss_kwargs.get('beta_ramping',True)
 
+    wandb.init(
+        # set the wandb project where this run will be logged
+        project="protein-generation",
+        
+        # track hyperparameters and run metadata
+        config={
+            "batch_size": batch_size,
+            "epochs": epochs,
+            "beta": final_beta,
+            **optimizer_kwargs
+        }
+    )
+    
     for epoch in range(0, epochs):
         # increasing beta for vae
         if beta_ramping:
@@ -89,6 +105,8 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
     test_losses = pd.DataFrame(test_losses)
     test_losses['Type'] = 'Test_data'
     loss_df = pd.concat([train_losses,test_losses])
+
+    wandb.finish()
 
     return model, loss_df
 

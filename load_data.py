@@ -39,6 +39,21 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
 
     return combdf
 
+def load_Rec_TS_orig(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13)), max_dups=1, max_prop=1):
+    # get input
+    combdf = pd.read_csv(file)
+
+    # sample to get nreads from each targetsite
+    combdf = combdf.groupby('target_sequence').apply(lambda x : x.sample(1000))
+
+    # combine targetsite with Sequence for training input
+    combdf['target_sequence_subset'] = [''.join(np.array(list(x))[ts_subset_index]) for x in combdf.target_sequence]
+    combdf['combined_sequence'] = combdf.target_sequence_subset + combdf.Sequence
+    combdf.reset_index(drop = True, inplace=True) # reset necessary to get integer indices later
+
+    print(f'{len(combdf):,}')
+
+    return combdf
 
 def split_train_test(combdf, by = 'target_sequence_subset', train_split = 0.9):
     # split into training and test
