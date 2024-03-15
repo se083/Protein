@@ -29,7 +29,7 @@ def train(model,train_loader,optimizer, **loss_kwargs):
         value = value/nr_batches
         losses_dict[key] = value
         print(key + ':{:.4f}  '.format(value),  end='')
-    wandb.log({key:value/nr_batches for (key, value) in losses_dict.items()})
+    wandb.log({'train_' + key:value/nr_batches for (key, value) in losses_dict.items()})
     print('')
     return dict(losses_dict)
 
@@ -53,7 +53,7 @@ def test(model,test_loader, **loss_kwargs):
         value = value/nr_batches
         losses_dict[key] = value
         print(key + ':{:.4f}  '.format(value),  end='')
-    wandb.log({key:value/nr_batches for (key, value) in losses_dict.items()})
+    wandb.log({'test_' + key:value/nr_batches for (key, value) in losses_dict.items()})
     print('')
     return dict(losses_dict)
 
@@ -84,6 +84,12 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
         }
     )
     
+    max_k = 5
+    grace_epochs = 10
+
+    min_loss = float('inf')
+    above_min_epochs = 0
+
     for epoch in range(0, epochs):
         # increasing beta for vae
         if beta_ramping:
@@ -99,7 +105,18 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
         test_losses += [test_loss_dict]
 
         print('')
+        test_loss = test_loss_dict['loss']
 
+        if test_loss <= min_loss:
+            min_loss = test_loss
+            above_min_epochs = 0
+        else:
+            above_min_epochs += 1
+
+        if epoch >= grace_epochs and above_min_epochs >= max_k:
+            print(f'early stopping because performance has not improved for {max_k} epochs')
+            break
+    
     train_losses = pd.DataFrame(train_losses)
     train_losses['Type'] = 'Training_data'
     test_losses = pd.DataFrame(test_losses)
