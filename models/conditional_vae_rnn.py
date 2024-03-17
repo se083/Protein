@@ -46,7 +46,7 @@ class CVAE(nn.Module):
         #new code
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, ts_len, num_layers, **layer_kwargs)
-        dec_layer_sizes = [x//decoder_proportion for x in layer_sizes[::-1]]
+        dec_layer_sizes = [int(x//decoder_proportion) for x in layer_sizes[::-1]]
         self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *dec_layer_sizes, self.input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, num_layers, output_shape = self.input_shape, **layer_kwargs)
 
