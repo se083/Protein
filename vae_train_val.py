@@ -39,7 +39,8 @@ def main(
     batch_norm = True,
     maximum_duplicates = 1,
     maximum_proportion = 1,
-    sample_orig = False):
+    sample_orig = False,
+    decoder_proportion = 1):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -77,7 +78,7 @@ def main(
     # prepare data and train
     train_index, test_index = utp.validation_indices(combdf.target_sequence_subset, uts)
 
-    model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, num_layers = num_layers, layer_kwargs={'batchnorm':batch_norm, 'dropout_p':dropout_p})
+    model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, num_layers = num_layers, decoder_proportion = decoder_proportion, layer_kwargs={'batchnorm':batch_norm, 'dropout_p':dropout_p})
     model.to('cuda')
     # summary(model, input_size = (357,22))
     print(f'{count_parameters(model):,}')
@@ -86,7 +87,7 @@ def main(
         weights = torch.load(pre_model)
         # print(model)
         model.load_state_dict(weights)
-    model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates':maximum_duplicates, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig})
+    model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates':maximum_duplicates, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig, 'decoder_proportion':decoder_proportion})
     
     val_index = test_index
     for i, leave_out_y in enumerate(uts):
@@ -133,6 +134,7 @@ def full_main():
     parser.add_argument('-dup','--maximum_duplicates', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates')
     parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
+    parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -177,7 +179,8 @@ def full_main():
             batch_norm = args.batch_norm, 
             maximum_duplicates = args.maximum_duplicates,
             maximum_proportion = args.maximum_proportion,
-            sample_orig = args.sample_orig
+            sample_orig = args.sample_orig,
+            decoder_proportion = args.decoder_proportion
             )
 
         # collect output data frames in lists and add the model_nr

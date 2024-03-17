@@ -39,14 +39,15 @@ class VaeEncoder(nn.Module):
         return self.fc_mu(x), self.fc_logvar(x), y
 
 class CVAE(nn.Module):
-    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, num_layers, layer_kwargs={}, *args, **kwargs):
+    def __init__(self, input_shape, layer_sizes, latent_size, ts_len, num_layers, decoder_proportion, layer_kwargs={}, *args, **kwargs):
         super(CVAE, self).__init__()
         self.input_shape = (input_shape[0]-ts_len, input_shape[1])
         #self.layer_sizes = [prod(input_shape), *layer_sizes, latent_size]
         #new code
         self.layer_sizes = [input_shape[1], *layer_sizes, latent_size]
         self.encoder = VaeEncoder(self.layer_sizes, ts_len, num_layers, **layer_kwargs)
-        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *layer_sizes[::-1], self.input_shape]
+        dec_layer_sizes = [x//decoder_proportion for x in layer_sizes[::-1]]
+        self.dec_layer_sizes = [[ts_len, input_shape[1], latent_size], *dec_layer_sizes, self.input_shape]
         self.decoder = VaeRNNDecoder(self.dec_layer_sizes, num_layers, output_shape = self.input_shape, **layer_kwargs)
 
     def reparameterize(self, mu, logvar):
