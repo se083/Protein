@@ -9,6 +9,7 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     # get input
     combdf = pd.read_csv(file)
 
+    # limit # instances of each recombinase sequence for each ts to max_dups
     combdf['dups'] = 1
     cdf = combdf.groupby(['trained_target_site', 'Sequence', 'target_sequence']).count().reset_index()
     cdf.to_csv('/content/drive/MyDrive/Data/Protein/combdf_count.csv')
@@ -22,6 +23,8 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     # combdf = combdf.groupby('trained_target_site').apply(
     #     lambda x : x.sample(mdf)
     # )
+
+    # limit the size of each ts library to mdf*max_prop
     max_mdf = mdf*max_prop
     combdf = combdf.groupby('trained_target_site').apply(
         lambda x : x.sample(max_mdf) if len(x) >= max_mdf else x.sample(len(x))

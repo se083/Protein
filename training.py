@@ -58,7 +58,7 @@ def test(model,test_loader, **loss_kwargs):
     return dict(losses_dict)
 
 
-def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, optimizer_kwargs={}):
+def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, optimizer_kwargs={}, hyperparameter_kwargs={}):
     input_shape = x_train.shape[1:]
     train_loader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(torch.FloatTensor(x_train)), shuffle = True, batch_size=batch_size)
     test_loader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(torch.FloatTensor(x_test)), shuffle = True, batch_size=batch_size)
@@ -80,7 +80,8 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
             "batch_size": batch_size,
             "epochs": epochs,
             "beta": final_beta,
-            **optimizer_kwargs
+            **optimizer_kwargs,
+            **hyperparameter_kwargs
         }
     )
     
