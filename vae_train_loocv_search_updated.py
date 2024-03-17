@@ -56,20 +56,36 @@ if __name__ == '__main__':
                         continue
                     else:
                         shutil.rmtree(model_folder)
-                settings = f'vae --outfolder {model_folder} \
-                        --input_data {args.input_data} \
-                        --epochs {es}\
-                        --batch_size {bs}\
-                        --latent_size {las}\
-                        --layer_sizes {lys}\
-                        --model_type {args.model_type}\
-                        --learning_rate {lr}\
-                        --specific_libs {libs}\
-                        --num_layers {nl}\
-                        --beta {beta}\
-                        --maximum_duplicates {dup}\
-                        --maximum_proportion {prop}\
-                        --sample_orig'
+                if sample_orig:
+                    settings = f'vae --outfolder {model_folder} \
+                            --input_data {args.input_data} \
+                            --epochs {es}\
+                            --batch_size {bs}\
+                            --latent_size {las}\
+                            --layer_sizes {lys}\
+                            --model_type {args.model_type}\
+                            --learning_rate {lr}\
+                            --specific_libs {libs}\
+                            --num_layers {nl}\
+                            --beta {beta}\
+                            --maximum_duplicates {dup}\
+                            --maximum_proportion {prop}\
+                            --sample_orig'
+                else:
+                    settings = f'vae --outfolder {model_folder} \
+                            --input_data {args.input_data} \
+                            --epochs {es}\
+                            --batch_size {bs}\
+                            --latent_size {las}\
+                            --layer_sizes {lys}\
+                            --model_type {args.model_type}\
+                            --learning_rate {lr}\
+                            --specific_libs {libs}\
+                            --num_layers {nl}\
+                            --beta {beta}\
+                            --maximum_duplicates {dup}\
+                            --maximum_proportion {prop}\
+                            '
                 print(settings.split())
                 sys.argv = settings.split()
                 try:
