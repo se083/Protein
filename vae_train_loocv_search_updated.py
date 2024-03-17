@@ -27,6 +27,8 @@ if __name__ == '__main__':
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
     parser.add_argument('-a','--beta', nargs='?', default=1, type=float, help='default = %(default)s; the final weight on the KL-Divergence', dest='beta')
     parser.add_argument('-lr','--learning_rate', nargs='?', default=0.001, type=float, help='default = %(default)s; the rate of learning, higher means faster learning, but can lead to less accuracy', dest='learning_rate')
+    parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
+
     # parser.add_argument('-dup','--maximum_duplicates', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='ts_weight')
     # parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='ts_weight')
 
@@ -45,8 +47,9 @@ if __name__ == '__main__':
                 bs = args.batch_size
                 lr = args.learning_rate
                 nl = args.num_layers
+                sample_orig = args.sample_orig
                 dup = 1
-                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}-{beta}-{dup}-{prop}')
+                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}-{beta}-{dup}-{prop}-{sample_orig}')
                 if os.path.exists(model_folder):
                     pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
                     if os.path.exists(pred_path):
@@ -65,7 +68,8 @@ if __name__ == '__main__':
                         --num_layers {nl}\
                         --beta {beta}\
                         --maximum_duplicates {dup}\
-                        --maximum_proportion {prop}'
+                        --maximum_proportion {prop}\
+                        --sample_orig {sample_orig}'
                 print(settings.split())
                 sys.argv = settings.split()
                 try:
