@@ -69,7 +69,7 @@ if __name__ == '__main__':
                         --beta {beta}\
                         --maximum_duplicates {dup}\
                         --maximum_proportion {prop}\
-                        --sample_orig {sample_orig}'
+                        --sample_orig'
                 print(settings.split())
                 sys.argv = settings.split()
                 try:
