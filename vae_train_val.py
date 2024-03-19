@@ -152,7 +152,7 @@ def full_main():
 
     # string for saving
     # folderstr = args.outprefix
-    folderstr = os.path.join(args.outfolder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{args.layer_sizes.replace(" ", "_")}-{args.specific_libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}')
+    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{args.layer_sizes.replace(" ", "_")}-{args.specific_libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}')
     if os.path.exists(folderstr):
         pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
         if os.path.exists(pred_path):
