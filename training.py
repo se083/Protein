@@ -114,8 +114,6 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
             min_loss = test_loss
             above_min_epochs = 0
             best_model = copy.deepcopy(model)
-            # min_train_losses = train_loss_dict
-            # min_test_losses = test_loss_dict
         else:
             above_min_epochs += 1
 
