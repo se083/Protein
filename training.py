@@ -30,7 +30,7 @@ def train(model,train_loader,optimizer, **loss_kwargs):
         value = value/nr_batches
         losses_dict[key] = value
         print(key + ':{:.4f}  '.format(value),  end='')
-    wandb.log({'train_' + key:value/nr_batches for (key, value) in losses_dict.items()})
+    wandb.log({'train_' + key:value for (key, value) in losses_dict.items()})
     print('')
     return dict(losses_dict)
 
@@ -54,7 +54,7 @@ def test(model,test_loader, **loss_kwargs):
         value = value/nr_batches
         losses_dict[key] = value
         print(key + ':{:.4f}  '.format(value),  end='')
-    wandb.log({'test_' + key:value/nr_batches for (key, value) in losses_dict.items()})
+    wandb.log({'test_' + key:value for (key, value) in losses_dict.items()})
     print('')
     return dict(losses_dict)
 
