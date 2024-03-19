@@ -51,13 +51,14 @@ if __name__ == '__main__':
                 sample_orig = args.sample_orig
                 decoder_proportion = args.decoder_proportion
                 dup = 1
-                model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}-{beta}-{dup}-{prop}-{sample_orig}-{decoder_proportion}')
-                if os.path.exists(model_folder):
-                    pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
-                    if os.path.exists(pred_path):
-                        continue
-                    else:
-                        shutil.rmtree(model_folder)
+                model_folder = args.outfolder
+                # model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{nl}-{beta}-{dup}-{prop}-{sample_orig}-{decoder_proportion}')
+                # if os.path.exists(model_folder):
+                #     pred_path = os.path.join(model_folder, 'prediction_hamming.csv')
+                #     if os.path.exists(pred_path):
+                #         continue
+                #     else:
+                #         shutil.rmtree(model_folder)
                 if sample_orig:
                     settings = f'vae --outfolder {model_folder} \
                             --input_data {args.input_data} \

@@ -111,10 +111,12 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
         if test_loss <= min_loss:
             min_loss = test_loss
             above_min_epochs = 0
+            # min_train_losses = train_loss_dict
+            # min_test_losses = test_loss_dict
         else:
             above_min_epochs += 1
 
-        if epoch >= grace_epochs and above_min_epochs >= max_k:
+        if epoch >= grace_epochs and above_min_epochs > max_k:
             print(f'early stopping because performance has not improved for {max_k} epochs')
             break
     

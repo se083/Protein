@@ -13,6 +13,9 @@ import argparse
 import torch
 import random
 from vae_train_loocv import analyse_model, count_parameters
+import sys
+import os
+import shutil
 
 def main(
     data = 'example_input/training_data_masked.csv',
@@ -148,7 +151,15 @@ def full_main():
     summary_function = summary_function_options[args.summary_function]
 
     # string for saving
-    folderstr = args.outprefix
+    # folderstr = args.outprefix
+    folderstr = os.path.join(args.outfolder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{args.layer_sizes.replace(" ", "_")}-{args.specific_libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}')
+    if os.path.exists(folderstr):
+        pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
+        if os.path.exists(pred_path):
+            print('model already exists')
+            return
+        else:
+            shutil.rmtree(folderstr)
     print('output going into: ' + folderstr)
 
     out_collect = defaultdict(list)
