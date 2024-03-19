@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from collections import defaultdict
 import wandb
+import copy
 
 
 def train(model,train_loader,optimizer, **loss_kwargs):
@@ -90,6 +91,7 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
 
     min_loss = float('inf')
     above_min_epochs = 0
+    best_model = None
 
     for epoch in range(0, epochs):
         # increasing beta for vae
@@ -111,6 +113,7 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
         if test_loss <= min_loss:
             min_loss = test_loss
             above_min_epochs = 0
+            best_model = copy.deepcopy(model)
             # min_train_losses = train_loss_dict
             # min_test_losses = test_loss_dict
         else:
@@ -125,10 +128,10 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
     test_losses = pd.DataFrame(test_losses)
     test_losses['Type'] = 'Test_data'
     loss_df = pd.concat([train_losses,test_losses])
-
+    best_model = best_model.to(torch.device('cuda'))
     wandb.finish()
 
-    return model, loss_df
+    return best_model, loss_df
 
 
 def ztrack_training(model, x_train, x_test, optimizer_kwargs, loss_kwargs):
