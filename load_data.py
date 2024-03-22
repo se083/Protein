@@ -5,7 +5,7 @@ import os
 import re
 
 
-def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13)), max_dups=1, max_prop=1):
+def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13)), max_dups_small=1, max_dups_big=1, max_prop=1):
     # get input
     combdf = pd.read_csv(file)
 
@@ -14,7 +14,7 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
     cdf = combdf.groupby(['trained_target_site', 'Sequence', 'target_sequence']).count().reset_index()
     cdf.to_csv('/content/drive/MyDrive/Data/Protein/combdf_count.csv')
     small_libs = ['loxA-1', 'loxA-2', 'loxA-3', 'loxB-1']
-    cdf['dups'] = cdf.apply(lambda x: min(x['dups'],max_dups) if x['trained_target_site'] in small_libs else min(x['dups'],1), axis=1)
+    cdf['dups'] = cdf.apply(lambda x: min(x['dups'],max_dups_small) if x['trained_target_site'] in small_libs else min(x['dups'],max_dups_big), axis=1)
     combdf = cdf.loc[cdf.index.repeat(cdf['dups'])]
 
 
@@ -43,7 +43,7 @@ def load_Rec_TS(file = 'example_input/RecGen-training-data.csv', nreads = 1000, 
 
     return combdf
 
-def load_Rec_TS_orig(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13)), max_dups=1, max_prop=1):
+def load_Rec_TS_orig(file = 'example_input/RecGen-training-data.csv', nreads = 1000, ts_subset_index = list(range(13))):
     # get input
     combdf = pd.read_csv(file)
 

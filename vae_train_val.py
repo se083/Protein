@@ -40,7 +40,8 @@ def main(
     pre_model = None,
     num_layers = 1,
     batch_norm = True,
-    maximum_duplicates = 1,
+    maximum_duplicates_small = 1,
+    maximum_duplicates_big = 1,
     maximum_proportion = 1,
     sample_orig = False,
     decoder_proportion = 1):
@@ -53,9 +54,9 @@ def main(
 
     # load the data
     if sample_orig: 
-        combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_dups=maximum_duplicates, max_prop=maximum_proportion)
+        combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_prop=maximum_proportion)
     else:
-        combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_dups=maximum_duplicates, max_prop=maximum_proportion)
+        combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_dups_small=maximum_duplicates_small, max_dups_big=maximum_duplicates_big, max_prop=maximum_proportion)
 
     # make indices and encode to one-hot
     yx_ind = np.array(utils.seqaln_to_indices(combdf.combined_sequence,vocab_list))
@@ -90,7 +91,7 @@ def main(
         weights = torch.load(pre_model)
         # print(model)
         model.load_state_dict(weights)
-    model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates':maximum_duplicates, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig, 'decoder_proportion':decoder_proportion})
+    model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates_small':maximum_duplicates_small, 'maximum_duplicates_big':maximum_duplicates_big, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig, 'decoder_proportion':decoder_proportion})
     
     val_index = test_index
     for i, leave_out_y in enumerate(uts):
@@ -134,7 +135,8 @@ def full_main():
     parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
     parser.add_argument('--batch_norm', default=True, action='store_true', help='use batch normalisation in the hidden layers', dest='batch_norm')
-    parser.add_argument('-dup','--maximum_duplicates', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates')
+    parser.add_argument('-max_dups_small','--maximum_duplicates_small', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates_small')
+    parser.add_argument('-max_dups_big','--maximum_duplicates_big', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates_big')
     parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
@@ -154,7 +156,7 @@ def full_main():
     # folderstr = args.outprefix
     lys = ' '.join(str(x) for x in args.layer_sizes)
     libs = ' '.join(args.specific_libs)
-    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}')
+    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}')
     if os.path.exists(folderstr):
         pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
         if os.path.exists(pred_path):
@@ -190,7 +192,8 @@ def full_main():
             pre_model = args.pre_model,
             num_layers = args.num_layers,
             batch_norm = args.batch_norm, 
-            maximum_duplicates = args.maximum_duplicates,
+            maximum_duplicates_small = args.maximum_duplicates_small,
+            maximum_duplicates_big = args.maximum_duplicates_big,
             maximum_proportion = args.maximum_proportion,
             sample_orig = args.sample_orig,
             decoder_proportion = args.decoder_proportion
