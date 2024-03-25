@@ -44,7 +44,8 @@ def main(
     maximum_duplicates_big = 1,
     maximum_proportion = 1,
     sample_orig = False,
-    decoder_proportion = 1):
+    decoder_proportion = 1,
+    beta_ramping = True):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -91,7 +92,7 @@ def main(
         weights = torch.load(pre_model)
         # print(model)
         model.load_state_dict(weights)
-    model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates_small':maximum_duplicates_small, 'maximum_duplicates_big':maximum_duplicates_big, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig, 'decoder_proportion':decoder_proportion})
+    model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len, 'beta_ramping': beta_ramping}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates_small':maximum_duplicates_small, 'maximum_duplicates_big':maximum_duplicates_big, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig, 'decoder_proportion':decoder_proportion})
     
     val_index = test_index
     for i, leave_out_y in enumerate(uts):
@@ -140,6 +141,8 @@ def full_main():
     parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
+    parser.add_argument('--override', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='override')
+    parser.add_argument('--beta_ramping', default=True, action='store_false', help='use batch normalisation in the hidden layers', dest='beta_ramping')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -156,15 +159,19 @@ def full_main():
     # folderstr = args.outprefix
     lys = ' '.join(str(x) for x in args.layer_sizes)
     libs = ' '.join(args.specific_libs)
-    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}')
+    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}-{args.beta_ramping}')
     if os.path.exists(folderstr):
         pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
-        if os.path.exists(pred_path):
-            print('model already exists')
-            return
-        else:
+        if args.override:
             shutil.rmtree(folderstr)
-    print('output going into: ' + folderstr)
+            print('output going into: ' + folderstr)
+        else:
+            if os.path.exists(pred_path):
+                print('model already exists')
+                return
+            else:
+                shutil.rmtree(folderstr)
+            print('output going into: ' + folderstr)
 
     out_collect = defaultdict(list)
 
@@ -196,7 +203,8 @@ def full_main():
             maximum_duplicates_big = args.maximum_duplicates_big,
             maximum_proportion = args.maximum_proportion,
             sample_orig = args.sample_orig,
-            decoder_proportion = args.decoder_proportion
+            decoder_proportion = args.decoder_proportion,
+            beta_ramping = args.beta_ramping
             )
 
         # collect output data frames in lists and add the model_nr
