@@ -161,6 +161,7 @@ def full_main():
     libs = ' '.join(args.specific_libs)
     folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}-{args.beta_ramping}')
     print(folderstr)
+    print(os.path.exists(folderstr))
     if os.path.exists(folderstr):
         pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
         if args.override:
