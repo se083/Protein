@@ -81,6 +81,7 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
             "batch_size": batch_size,
             "epochs": epochs,
             "beta": final_beta,
+            "beta_ramping": beta_ramping,
             **optimizer_kwargs,
             **hyperparameter_kwargs
         }
