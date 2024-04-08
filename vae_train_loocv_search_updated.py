@@ -40,6 +40,7 @@ if __name__ == '__main__':
     #         for lr in [1e-3, 1e-4, 1e-5]:
     #             for las in [2, 4, 6]:
 
+    count = 0
     for bs in [32, 64]:
         for dup_big in [1, 3, 5, 10]:
             for dup_small in [1, 3, 5, 10]:
@@ -47,6 +48,8 @@ if __name__ == '__main__':
                     for beta in [1, 0.5, 0.1, 0.05, 0.01]:
                         for las in [2, 4, 6, 8]:
                             for dec_prop in [1,2]:
+                                count += 1
+                                print(count)
                                 lys = args.layer_sizes
                                 lys = ' '.join(str(x) for x in lys)
                                 libs = ' '.join(args.specific_libs)
