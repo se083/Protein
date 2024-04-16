@@ -87,7 +87,7 @@ def model_training(model, x_train, x_test, epochs, batch_size, loss_kwargs={}, o
         }
     )
     
-    max_k = 5
+    max_k = 10
     grace_epochs = 10
 
     min_loss = float('inf')
