@@ -42,8 +42,8 @@ if __name__ == '__main__':
 
     count = 0
     for bs in [32, 64]:
-        for dup_big in [1, 3, 5, 10]:
-            for dup_small in [1, 3, 5, 10]:
+        for dup_big in [1]:
+            for dup_small in [1, 3]:
                 for prop in [1, 2, 3]:
                     for beta in [1, 0.5, 0.1, 0.05, 0.01]:
                         for las in [2, 4, 6, 8]:
