@@ -70,7 +70,7 @@ if __name__ == '__main__':
                             --epochs {es}\
                             --batch_size {args.batch_size}\
                             --latent_size {args.latent_size}\
-                            --layer_sizes {args.layer_sizes}\
+                            --layer_sizes {lys}\
                             --model_type {args.model_type}\
                             --learning_rate {lr}\
                             --specific_libs {libs}\
