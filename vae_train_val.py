@@ -164,15 +164,11 @@ def full_main():
     print(os.path.exists(folderstr))
     if os.path.exists(folderstr):
         pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
-        if args.override:
-            shutil.rmtree(folderstr)
-        else:
-            if os.path.exists(pred_path):
-                print('model already exists')
-                return
-            else:
-                shutil.rmtree(folderstr)
-        print('output going into: ' + folderstr)
+        if not args.override and os.path.exists(pred_path):
+            print('model already exists')
+            return
+        shutil.rmtree(folderstr)
+    print('output going into: ' + folderstr)
 
     out_collect = defaultdict(list)
 
