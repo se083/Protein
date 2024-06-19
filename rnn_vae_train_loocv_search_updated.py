@@ -42,9 +42,9 @@ if __name__ == '__main__':
     #             for las in [2, 4, 6]:
 
     count = 0
-    for dup_big in [3, 10, float('inf')]:
-        for dup_small in [3, 10, float('inf')]:
-            for prop in [3, 10, float('inf')]:
+    for dup_big in [3, 10, int.MaxValue]:
+        for dup_small in [3, 10, int.MaxValue]:
+            for prop in [3, 10, int.MaxValue]:
                 count += 1
                 print(count)
                 lys = args.layer_sizes
