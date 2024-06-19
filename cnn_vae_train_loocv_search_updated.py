@@ -44,9 +44,9 @@ if __name__ == '__main__':
     count = 0
     for beta in [1, 0.1, 0.01]:
         for lr in [1e-3, 1e-4, 1e-5]:
-            for dup_big in [1, 5, 10]:
-                for dup_small in [1, 5, 10]:
-                    for prop in [1, 5, 10]:
+            for dup_big in [1, 5]:
+                for dup_small in [1, 5]:
+                    for prop in [1, 5]:
                         for dec_prop in [1, 2]:
                             count += 1
                             print(count)
