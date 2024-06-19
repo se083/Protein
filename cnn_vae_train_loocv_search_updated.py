@@ -10,6 +10,7 @@ import pandas as pd
 from collections import defaultdict
 import subprocess
 import argparse
+import math
 from vae_train_val import full_main
 
 import sys
@@ -44,9 +45,9 @@ if __name__ == '__main__':
     count = 0
     for beta in [1, 0.1, 0.01]:
         for lr in [1e-3, 1e-4, 1e-5]:
-            for dup_big in [1, 5, int.MaxValue]:
-                for dup_small in [1, 5, int.MaxValue]:
-                    for prop in [1, 5, int.MaxValue]:
+            for dup_big in [1, 5, math.inf]:
+                for dup_small in [1, 5, math.inf]:
+                    for prop in [1, 5, math.inf]:
                         for dec_prop in [1, 2]:
                             count += 1
                             print(count)
