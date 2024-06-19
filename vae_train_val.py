@@ -54,8 +54,8 @@ def main(
     summary_function = np.min
 
     # load the data
-    if sample_orig: 
-        combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_prop=maximum_proportion)
+    if sample_orig or maximum_duplicates_small>5 or maximum_duplicates_big>5 or maximum_proportion>5: 
+        combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index)
     else:
         combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_dups_small=maximum_duplicates_small, max_dups_big=maximum_duplicates_big, max_prop=maximum_proportion)
 
