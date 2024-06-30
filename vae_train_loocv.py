@@ -110,7 +110,11 @@ def main(
     n_out = 1000,
     pre_model = None,
     num_layers = 1,
-    batch_norm = True):
+    batch_norm = True,
+    maximum_duplicates_small = 1,
+    maximum_duplicates_big = 1,
+    maximum_proportion = 1,
+    sample_orig = False):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -119,7 +123,10 @@ def main(
     summary_function = np.min
 
     # load the data
-    combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index)
+    if sample_orig or maximum_duplicates_small>5 or maximum_duplicates_big>5 or maximum_proportion>5: 
+        combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index)
+    else:
+        combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index, max_dups_small=maximum_duplicates_small, max_dups_big=maximum_duplicates_big, max_prop=maximum_proportion)
 
     # make indices and encode to one-hot
     yx_ind = np.array(utils.seqaln_to_indices(combdf.combined_sequence,vocab_list))
@@ -154,7 +161,7 @@ def main(
         if pre_model is not None:
             weights = torch.load(pre_model)
             model.load_state_dict(weights)
-        model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate})
+        model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates_small':maximum_duplicates_small, 'maximum_duplicates_big':maximum_duplicates_big, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig})
 
         out_dict = analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out)
 
@@ -192,8 +199,10 @@ def full_main():
     parser.add_argument('-p','--pre_model', nargs='?', default=None, type=str, help='default = %(default)s; path to the pre-trained model', dest='pre_model')
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
     parser.add_argument('--batch_norm', default=True, action='store_true', help='use batch normalisation in the hidden layers', dest='batch_norm')
-    parser.add_argument('-dup','--maximum_duplicates', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='ts_weight')
-    parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='ts_weight')
+    parser.add_argument('-max_dups_small','--maximum_duplicates_small', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates_small')
+    parser.add_argument('-max_dups_big','--maximum_duplicates_big', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates_big')
+    parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
+    parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -235,7 +244,11 @@ def full_main():
             n_out = args.n_out,
             pre_model = args.pre_model,
             num_layers = args.num_layers,
-            batch_norm = args.batch_norm)
+            batch_norm = args.batch_norm,
+            maximum_duplicates_small = args.maximum_duplicates_small,
+            maximum_duplicates_big = args.maximum_duplicates_big,
+            maximum_proportion = args.maximum_proportion,
+            sample_orig = args.sample_orig)
 
         # collect output data frames in lists and add the model_nr
         for key, value in out.items():
