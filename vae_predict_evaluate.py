@@ -46,7 +46,7 @@ target_sequence = [''.join(np.array(list(x))[params['ts_subset_index']]) for x i
 ts_len = len(params['ts_subset_index'])
 
 # load training data
-combdf = ld.load_Rec_TS(file = args.training_data, nreads = params['nreads'], ts_subset_index=params['ts_subset_index'])
+combdf = ld.load_Rec_TS_orig(file = args.training_data, nreads = params['nreads'], ts_subset_index=params['ts_subset_index'])
 
 # make indices
 vocab_list = utils.vocab_list

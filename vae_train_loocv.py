@@ -119,7 +119,7 @@ def main(
     summary_function = np.min
 
     # load the data
-    combdf = ld.load_Rec_TS(file = data, nreads = nreads, ts_subset_index=ts_subset_index)
+    combdf = ld.load_Rec_TS_orig(file = data, nreads = nreads, ts_subset_index=ts_subset_index)
 
     # make indices and encode to one-hot
     yx_ind = np.array(utils.seqaln_to_indices(combdf.combined_sequence,vocab_list))

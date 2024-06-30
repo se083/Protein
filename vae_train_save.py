@@ -47,7 +47,7 @@ def main():
 
     ##### load data #####
 
-    combdf = ld.load_Rec_TS(file = args.input_data, nreads = args.nreads, ts_subset_index=ts_subset_index)
+    combdf = ld.load_Rec_TS_orig(file = args.input_data, nreads = args.nreads, ts_subset_index=ts_subset_index)
 
     # make indices
     vocab_list = utils.vocab_list
