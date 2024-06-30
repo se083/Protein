@@ -35,6 +35,7 @@ def pre_train():
     parser.add_argument('-n','--n_models', nargs='?', default=1, type=int, help='default = %(default)s; number of models to train', dest='n_models')
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
     parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
+    parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -71,6 +72,7 @@ def pre_train():
     layer_sizes=args.layer_sizes,
     latent_size=args.latent_size,
     ts_len=0,
+    decoder_proportion = args.decoder_proportion,
     layer_kwargs={'batchnorm':args.batch_norm, 'dropout_p':args.dropout_p},
     num_layers=args.num_layers)
     # print(model)
