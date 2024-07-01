@@ -46,25 +46,25 @@ if __name__ == '__main__':
             las = 2
             nl = args.num_layers
             model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{nl}-{args.folder_name}')
-            if os.path.exists(model_folder):
-                fine_tune_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-loocv-{args.num_layers}-{args.beta}-sample_orig-{args.decoder_proportion}-{args.beta_ramping}')
-                pred_path = os.path.join(fine_tune_folder, 'prediction_hamming.csv')
-                if os.path.exists(pred_path):
-                    continue
-                else:
-                    shutil.rmtree(model_folder)
-            settings = f'vae --outfolder {model_folder} \
-                    --input_data {args.pre_input_data} \
-                    --epochs {es}\
-                    --batch_size {bs}\
-                    --model_type {args.pre_train_model_type}\
-                    --learning_rate {lr}\
-                    -l {lys}\
-                    -nl {nl}\
-                    --beta {args.beta}'
-            print(settings.split())
-            sys.argv = settings.split()
-            pre_train()
+            if not os.path.exists(model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'):
+                # fine_tune_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-loocv-{args.num_layers}-{args.beta}-sample_orig-{args.decoder_proportion}-{args.beta_ramping}')
+                # pred_path = os.path.join(fine_tune_folder, 'prediction_hamming.csv')
+                # if os.path.exists(pred_path):
+                #     continue
+                # else:
+                #     shutil.rmtree(model_folder)
+                settings = f'vae --outfolder {model_folder} \
+                        --input_data {args.pre_input_data} \
+                        --epochs {es}\
+                        --batch_size {bs}\
+                        --model_type {args.pre_train_model_type}\
+                        --learning_rate {lr}\
+                        -l {lys}\
+                        -nl {nl}\
+                        --beta {args.beta}'
+                print(settings.split())
+                sys.argv = settings.split()
+                pre_train()
             pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
             settings = f'vae --outfolder {model_folder} \
                     --input_data {args.input_data} \
