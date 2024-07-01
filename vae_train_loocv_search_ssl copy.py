@@ -10,7 +10,7 @@ import pandas as pd
 from collections import defaultdict
 import subprocess
 import argparse
-from vae_train_val import full_main
+from vae_train_loocv import full_main
 from vae_train_ssl import pre_train
 
 import sys
@@ -39,12 +39,11 @@ if __name__ == '__main__':
         for bs in [32, 64, 128]:
             lys = args.layer_sizes
             lys = ' '.join(str(x) for x in lys)
-            libs = ' '.join(args.specific_libs)
             las = 2
             nl = args.num_layers
             model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{nl}')
             if os.path.exists(model_folder):
-                fine_tune_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{libs.replace(" ", "_")}')
+                fine_tune_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}')
                 pred_path = os.path.join(fine_tune_folder, 'prediction_hamming.csv')
                 if os.path.exists(pred_path):
                     continue
@@ -63,14 +62,13 @@ if __name__ == '__main__':
             sys.argv = settings.split()
             pre_train()
             pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
-            model_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{libs.replace(" ", "_")}')
+            model_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}')
             settings = f'vae --outfolder {model_folder} \
                     --input_data {args.input_data} \
                     --epochs {args.epochs}\
                     --batch_size {args.batch_size}\
                     --model_type {args.fine_tune_model_type}\
                     --learning_rate {args.learning_rate}\
-                    --specific_libs {libs}\
                     --pre_model {pre_model}\
                     -l {lys}\
                     -nl {nl}\
