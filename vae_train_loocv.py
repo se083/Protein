@@ -221,7 +221,11 @@ def full_main():
     summary_function = summary_function_options[args.summary_function]
 
     # string for saving
-    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}-{args.beta_ramping}')
+    lys = ' '.join(str(x) for x in args.layer_sizes)
+    if args.sample_orig:
+        folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-loocv-{args.num_layers}-{args.beta}-sample_orig-{args.decoder_proportion}-{args.beta_ramping}')
+    else:
+        folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-loocv-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.decoder_proportion}-{args.beta_ramping}')
     print(folderstr)
     print(os.path.exists(folderstr))
     if os.path.exists(folderstr):
