@@ -13,6 +13,8 @@ import argparse
 import torch
 import random
 from torchsummary import summary
+import os
+import shutil
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -205,6 +207,7 @@ def full_main():
     parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
+    parser.add_argument('--override', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='override')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -218,7 +221,15 @@ def full_main():
     summary_function = summary_function_options[args.summary_function]
 
     # string for saving
-    folderstr = args.outprefix
+    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{libs.replace(" ", "_")}-{args.num_layers}-{args.beta}-{args.maximum_duplicates_small}-{args.maximum_duplicates_big}-{args.maximum_proportion}-{args.sample_orig}-{args.decoder_proportion}-{args.beta_ramping}')
+    print(folderstr)
+    print(os.path.exists(folderstr))
+    if os.path.exists(folderstr):
+        pred_path = os.path.join(folderstr, 'prediction_hamming.csv')
+        if not args.override and os.path.exists(pred_path):
+            print('model already exists')
+            return
+        shutil.rmtree(folderstr)
     print('output going into: ' + folderstr)
 
     out_collect = defaultdict(list)

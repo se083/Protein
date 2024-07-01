@@ -62,7 +62,6 @@ if __name__ == '__main__':
             sys.argv = settings.split()
             pre_train()
             pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
-            model_folder = os.path.join(model_folder, f'{args.epochs}-{args.batch_size}-{args.learning_rate}')
             settings = f'vae --outfolder {model_folder} \
                     --input_data {args.input_data} \
                     --epochs {args.epochs}\
