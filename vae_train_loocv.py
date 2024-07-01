@@ -114,7 +114,8 @@ def main(
     maximum_duplicates_small = 1,
     maximum_duplicates_big = 1,
     maximum_proportion = 1,
-    sample_orig = False):
+    sample_orig = False,
+    decoder_proportion = 1):
 
     ###### load and prepare data ######
     # some variables needed later
@@ -153,7 +154,7 @@ def main(
         # prepare data and train
         train_index, test_index = utp.leave_out_indices(combdf.target_sequence_subset, leave_out_y, yx_ind[:,:ts_len], hamming_cutoff=hamming_cutoff)
 
-        model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, num_layers=num_layers, layer_kwargs={'batchnorm':batch_norm, 'dropout_p':dropout_p})
+        model = vae_models[model_type](input_shape=yx_oh.shape[1:], layer_sizes=layer_sizes, latent_size=latent_size, ts_len=ts_len, num_embeddings=num_embeddings, embedding_dim=embedding_dim, num_layers=num_layers, decoder_proportion = decoder_proportion, layer_kwargs={'batchnorm':batch_norm, 'dropout_p':dropout_p})
         model.to('cuda')
         # summary(model, input_size = (357,22))
         print(f'{count_parameters(model):,}')
@@ -161,7 +162,7 @@ def main(
         if pre_model is not None:
             weights = torch.load(pre_model)
             model.load_state_dict(weights)
-        model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates_small':maximum_duplicates_small, 'maximum_duplicates_big':maximum_duplicates_big, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig})
+        model, loss_df = training.model_training(model=model, x_train=yx_oh[train_index], x_test=yx_oh[test_index], epochs=epochs, batch_size=batch_size, loss_kwargs={'beta':beta, 'ts_weight':ts_weight, 'ts_len':ts_len}, optimizer_kwargs={'weight_decay':weight_decay, 'lr':learning_rate}, hyperparameter_kwargs={'latent_size':latent_size, 'layer_sizes':layer_sizes, 'maximum_duplicates_small':maximum_duplicates_small, 'maximum_duplicates_big':maximum_duplicates_big, 'maximum_proportion':maximum_proportion, 'specific_libs':specific_libs, 'sample_orig':sample_orig, 'decoder_proportion':decoder_proportion})
 
         out_dict = analyse_model(out_dict, loss_df, summary_function, leave_out_y, yx_oh, yx_ind, model, train_index, test_index, vocab_list, ts_len, model_type, n_out)
 
@@ -203,6 +204,7 @@ def full_main():
     parser.add_argument('-max_dups_big','--maximum_duplicates_big', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_duplicates_big')
     parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
+    parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -248,7 +250,8 @@ def full_main():
             maximum_duplicates_small = args.maximum_duplicates_small,
             maximum_duplicates_big = args.maximum_duplicates_big,
             maximum_proportion = args.maximum_proportion,
-            sample_orig = args.sample_orig)
+            sample_orig = args.sample_orig,
+            decoder_proportion = args.decoder_proportion)
 
         # collect output data frames in lists and add the model_nr
         for key, value in out.items():
