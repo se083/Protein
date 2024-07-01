@@ -208,6 +208,7 @@ def full_main():
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
     parser.add_argument('--override', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='override')
+    parser.add_argument('--beta_ramping', default=True, action='store_false', help='use batch normalisation in the hidden layers', dest='beta_ramping')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
