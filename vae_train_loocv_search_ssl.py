@@ -47,7 +47,8 @@ if __name__ == '__main__':
             nl = args.num_layers
             model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{nl}-{args.decoder_proportion}-{args.folder_name}')
             if not os.path.exists(model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'):
-                shutil.rmtree(model_folder)
+                if os.path.exists(model_folder):
+                    shutil.rmtree(model_folder)
                 settings = f'vae --outfolder {args.outfolder} \
                         --input_data {args.pre_input_data} \
                         --epochs {es}\
