@@ -64,7 +64,7 @@ if __name__ == '__main__':
                 pre_train()
             else: 
                 print('pre-model already exists')
-                pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
+            pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
             settings = f'vae --outfolder {model_folder} \
                     --input_data {args.input_data} \
                     --epochs {args.epochs}\
