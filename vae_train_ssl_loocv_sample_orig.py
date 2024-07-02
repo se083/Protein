@@ -35,7 +35,6 @@ if __name__ == '__main__':
     parser.add_argument('-prop','--maximum_proportion', nargs='?', default=1, type=int, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='maximum_proportion')
     parser.add_argument('--sample_orig', default=False, action='store_true', help='use batch normalisation in the hidden layers', dest='sample_orig')
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
-    parser.add_argument('-name','--folder_name', nargs='?', default='', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='folder_name')
 
     args = parser.parse_args()
     es = args.epochs
@@ -45,7 +44,7 @@ if __name__ == '__main__':
     lys = ' '.join(str(x) for x in lys)
     las = 2
     nl = args.num_layers
-    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{nl}-{args.decoder_proportion}-{args.folder_name}')
+    model_folder = os.path.join(args.outfolder, f'{es}-{bs}-{lr}-{las}-{lys.replace(" ", "_")}-{nl}-{args.decoder_proportion}')
     if not os.path.exists(model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'):
         if os.path.exists(model_folder):
             shutil.rmtree(model_folder)
@@ -57,8 +56,7 @@ if __name__ == '__main__':
                 --learning_rate {lr}\
                 -l {lys}\
                 -nl {nl}\
-                --beta {args.beta}\
-                -name {args.folder_name}'
+                --beta {args.beta}'
         print(settings.split())
         sys.argv = settings.split()
         pre_train()

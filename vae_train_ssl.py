@@ -40,7 +40,6 @@ def pre_train():
     parser.add_argument('-nl','--num_layers', nargs='?', default=1, type=int, help='default = %(default)s; the number of LSTM layers', dest='num_layers')
     parser.add_argument('--seed', nargs='?', default=0, type=int, help='default = %(default)s; default random seed', dest='seed')
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
-    parser.add_argument('-name','--folder_name', nargs='?', default='', type=str, help='default = %(default)s; select the type of VAE model to use; options: VAE, CVAE, SVAE, MMD_VAE, VQ_VAE', dest='folder_name')
 
     args = parser.parse_args()
     np.random.seed(args.seed)
@@ -65,7 +64,7 @@ def pre_train():
 
     # where to save and paramter saving
     lys = ' '.join(str(x) for x in args.layer_sizes)
-    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{args.num_layers}-{args.decoder_proportion}-{args.folder_name}')
+    folderstr = os.path.join(args.outprefix, f'{args.epochs}-{args.batch_size}-{args.learning_rate}-{args.latent_size}-{lys.replace(" ", "_")}-{args.num_layers}-{args.decoder_proportion}')
     folderstr = utils.check_mkdir(folderstr)
     with open(folderstr + "/parameters.txt","w") as f: f.writelines([str(key) + f':\t' + str(val) + '\n' for key, val in params.items()])
 
