@@ -73,9 +73,9 @@ if __name__ == '__main__':
                     -l {lys}\
                     -nl {nl}\
                     --beta {args.beta}\
-                    -max_dups_small {args.max_dups_small}\
-                    -max_dups_big {args.max_dups_big}\
-                    -prop {args.prop}'
+                    -max_dups_small {args.maximum_duplicates_small}\
+                    -max_dups_big {args.maximum_duplicates_big}\
+                    -prop {args.maximum_proportion}'
             print(settings.split())
             sys.argv = settings.split()
             full_main()
