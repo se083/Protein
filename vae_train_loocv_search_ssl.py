@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('-dec_prop','--decoder_proportion', nargs='?', default=1, type=float, help='default = %(default)s; the multiplyer applied to the reconstruction loss of the target site', dest='decoder_proportion')
 
     args = parser.parse_args()
-    es=40
+    es = args.epochs
     for lr in [1e-3, 1e-4, 1e-5]:
         for bs in [32, 64, 128]:
             lys = args.layer_sizes
