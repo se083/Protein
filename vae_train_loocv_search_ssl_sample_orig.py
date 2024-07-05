@@ -65,7 +65,6 @@ if __name__ == '__main__':
             pre_model = model_folder + '/' + args.pre_train_model_type + '_weights_0.pt'
             settings = f'vae --outfolder {model_folder} \
                     --input_data {args.input_data} \
-                    --epochs {args.epochs}\
                     --batch_size {args.batch_size}\
                     --model_type {args.fine_tune_model_type}\
                     --learning_rate {args.learning_rate}\
